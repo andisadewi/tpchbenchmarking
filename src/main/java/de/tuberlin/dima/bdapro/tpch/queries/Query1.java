@@ -1,4 +1,4 @@
-package de.tuberlin.dima.bdapro.queries;
+package de.tuberlin.dima.bdapro.tpch.queries;
 
 public class Query1 {
 
