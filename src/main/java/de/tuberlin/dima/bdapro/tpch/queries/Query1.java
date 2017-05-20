@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.CsvReader;
@@ -19,32 +20,25 @@ import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple7;
 import org.apache.flink.util.Collector;
 
-import de.tuberlin.dima.bdapro.tpch.PathConfig;
+import de.tuberlin.dima.bdapro.tpch.Config;
 
-public class Query1 {
+public class Query1 extends Query {
 
-	private ExecutionEnvironment env;
-	private String sf;
-
-	public static void main(final String[] args) {
-		final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-		new Query1(env, "1.0");
-	}
+	private int delta = getDelta();
 
 	public Query1(final ExecutionEnvironment env, final String sf) {
-		this.env = env;
-		this.sf = sf;
+		super(env, sf);
+	}
 
-		final int deltaDays = getDelta();
-		final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(deltaDays);
+	@Override
+	public List<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> execute() {
 
+		final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(delta);
 		final DataSet<Tuple7<Integer, Double, Double, Double, String, String, String>> lineitems = readLineitem();
 
 		try {
-			// final List<Tuple10<String, String, Double, Double, Double,
-			// Double, Double, Double, Double, Integer>> out = lineitems
-			lineitems.map(
-					new MapFunction<Tuple7<Integer, Double, Double, Double, String, String, String>, Tuple7<Integer, Double, Double, Double, String, String, LocalDate>>() {
+			final List<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> out = lineitems
+					.map(new MapFunction<Tuple7<Integer, Double, Double, Double, String, String, String>, Tuple7<Integer, Double, Double, Double, String, String, LocalDate>>() {
 						private static final long serialVersionUID = 1L;
 
 						@Override
@@ -77,7 +71,7 @@ public class Query1 {
 
 									final HashMap<String, List<HashMap<String, List<Tuple7<Integer, Double, Double, Double, String, String, LocalDate>>>>> orderBy = new HashMap<String, List<HashMap<String, List<Tuple7<Integer, Double, Double, Double, String, String, LocalDate>>>>>();
 
-									// order by
+									// group by
 									loop: for (final Tuple7<Integer, Double, Double, Double, String, String, LocalDate> tuple : arg0) {
 										if (orderBy.containsKey(tuple.f4)) {
 											final List<HashMap<String, List<Tuple7<Integer, Double, Double, Double, String, String, LocalDate>>>> list = orderBy
@@ -136,47 +130,38 @@ public class Query1 {
 												avgExtendedPrice = sumExtendedPrice / count;
 												avgDiscount /= count;
 
-												arg1.collect(
+												arg1.collect(keepOnlyTwoDecimals(
 														new Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>(
 																returnFlag.getKey(), lineStatus.getKey(), sumQuantity,
 																sumExtendedPrice, sumExtPriceDiscount,
 																sumExtPriceDiscountTax, avgQuantity, avgExtendedPrice,
-																avgDiscount, count));
-
+																avgDiscount, count)));
 											}
 										}
 									}
 								}
 							})
-					.print();
-			// System.out.print("bla " + s);
-			// System.out.println(Arrays.toString(out.toArray()));
+					.sortPartition(0, Order.ASCENDING).sortPartition(1, Order.ASCENDING).collect();
+			return out;
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		return null;
 	}
 
 	private DataSet<Tuple7<Integer, Double, Double, Double, String, String, String>> readLineitem() {
-		CsvReader source = null;
-		switch (sf) {
-		case ("1.0"):
-			source = env.readCsvFile(PathConfig.LINEITEM_1);
-			break;
-		default:
-			source = env.readCsvFile(PathConfig.LINEITEM_1);
-			break;
-		}
-
+		final CsvReader source = getCSVReader(Config.LINEITEM);
 		return source.fieldDelimiter("|").includeFields("0000111111100000").types(Integer.class, Double.class,
 				Double.class, Double.class, String.class, String.class, String.class);
 	}
 
 	private int getDelta() {
 		final Random rand = new Random();
-		// return 60 + rand.nextInt((120 - 60) + 1);
-		return 90;
+		return 60 + rand.nextInt((120 - 60) + 1);
+	}
+
+	public void setDelta(final int delta) {
+		this.delta = delta;
 	}
 
 }
