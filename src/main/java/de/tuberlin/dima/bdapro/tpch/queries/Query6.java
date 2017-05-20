@@ -1,7 +1,6 @@
 package de.tuberlin.dima.bdapro.tpch.queries;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.flink.api.common.functions.FilterFunction;
@@ -40,14 +39,13 @@ public class Query6 extends Query {
 
 						@Override
 						public boolean filter(final Tuple4<Double, Double, Double, String> value) throws Exception {
-							final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 							double lowerBoundDiscount = convertToTwoDecimal(randDiscount - 0.01);
 							double upperBoundDiscount = convertToTwoDecimal(randDiscount + 0.01);
 							return (value.f2 >= lowerBoundDiscount && value.f2 <= upperBoundDiscount)
 									&& (value.f0 < randQuantity)
-									&& (LocalDate.parse(value.f3, formatter).isEqual(randDate)
-											|| LocalDate.parse(value.f3, formatter).isAfter(randDate))
-									&& (LocalDate.parse(value.f3, formatter).isBefore(randDate.plusYears(1)));
+									&& (LocalDate.parse(value.f3).isEqual(randDate)
+											|| LocalDate.parse(value.f3).isAfter(randDate))
+									&& (LocalDate.parse(value.f3).isBefore(randDate.plusYears(1)));
 						}
 					}).map(new MapFunction<Tuple4<Double, Double, Double, String>, Tuple1<Double>>() {
 						private static final long serialVersionUID = 1L;
