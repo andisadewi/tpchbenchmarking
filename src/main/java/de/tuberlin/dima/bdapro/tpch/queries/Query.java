@@ -1,6 +1,7 @@
 package de.tuberlin.dima.bdapro.tpch.queries;
 
 import java.util.List;
+import java.util.Random;
 
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.CsvReader;
@@ -32,6 +33,12 @@ public abstract class Query {
 
 	public abstract List<? extends Tuple> execute();
 
+	/**
+	 * Check all double fields in input tuple and keep only two decimal place.
+	 * 
+	 * @param tuple
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Tuple> T keepOnlyTwoDecimals(final Tuple tuple) {
 		final int size = tuple.getArity();
@@ -41,5 +48,29 @@ public abstract class Query {
 			}
 		}
 		return (T) tuple;
+	}
+
+	/**
+	 * Get a random integer between two values (both are inclusive).
+	 * 
+	 * @param upperLimit
+	 * @param bottomLimit
+	 * @return
+	 */
+	public static int getRandomInt(final int bottomLimit, final int upperLimit) {
+		final Random rand = new Random();
+		return bottomLimit + rand.nextInt((upperLimit - bottomLimit) + 1);
+	}
+
+	/**
+	 * Get a random double between two values (both are inclusive).
+	 * 
+	 * @param upperLimit
+	 * @param bottomLimit
+	 * @return
+	 */
+	public static double getRandomDouble(final double bottomLimit, final double upperLimit) {
+		final Random rand = new Random();
+		return bottomLimit + (upperLimit - bottomLimit) * rand.nextDouble();
 	}
 }
