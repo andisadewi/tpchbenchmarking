@@ -28,7 +28,7 @@ public abstract class Query {
 	 * @return the CSV Reader
 	 */
 	protected CsvReader getCSVReader(final String tableName) {
-		return env.readCsvFile(Config.BASE_DIR + sf + "/" + tableName);
+		return getEnv().readCsvFile(Config.BASE_DIR + sf + "/" + tableName);
 	}
 
 	public abstract List<? extends Tuple> execute();
@@ -44,10 +44,14 @@ public abstract class Query {
 		final int size = tuple.getArity();
 		for (int i = 0; i < size; i++) {
 			if (tuple.getField(i) instanceof Double) {
-				tuple.setField(Math.round((double) tuple.getField(i) * 100.0) / 100.0, i);
+				tuple.setField(convertToTwoDecimal((double) tuple.getField(i)), i);
 			}
 		}
 		return (T) tuple;
+	}
+
+	public static double convertToTwoDecimal(final double value) {
+		return Math.round(value * 100.0) / 100.0;
 	}
 
 	/**
@@ -72,5 +76,9 @@ public abstract class Query {
 	public static double getRandomDouble(final double bottomLimit, final double upperLimit) {
 		final Random rand = new Random();
 		return bottomLimit + (upperLimit - bottomLimit) * rand.nextDouble();
+	}
+
+	public ExecutionEnvironment getEnv() {
+		return env;
 	}
 }

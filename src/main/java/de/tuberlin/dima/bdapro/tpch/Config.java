@@ -6,4 +6,10 @@ public class Config {
 
 	////// TABLE NAMES //////
 	public static final String LINEITEM = "lineitem.tbl";
+
+	public static final String NATION = "nation.tbl";
+
+	public static final String CUSTOMER = "customer.tbl";
+
+	public static final String ORDERS = "orders.tbl";
 }
