@@ -44,10 +44,14 @@ public abstract class Query {
 		final int size = tuple.getArity();
 		for (int i = 0; i < size; i++) {
 			if (tuple.getField(i) instanceof Double) {
-				tuple.setField(Math.round((double) tuple.getField(i) * 100.0) / 100.0, i);
+				tuple.setField(convertToTwoDecimal((double) tuple.getField(i)), i);
 			}
 		}
 		return (T) tuple;
+	}
+
+	public static double convertToTwoDecimal(final double value) {
+		return Math.round(value * 100.0) / 100.0;
 	}
 
 	/**

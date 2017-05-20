@@ -23,16 +23,20 @@ import de.tuberlin.dima.bdapro.tpch.Config;
 
 public class Query1 extends Query {
 
-	private int delta = getRandomInt(60, 120);
-
 	public Query1(final ExecutionEnvironment env, final String sf) {
 		super(env, sf);
 	}
 
 	@Override
 	public List<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> execute() {
+		return execute(getRandomInt(60, 120));
+	}
 
-		final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(delta);
+	public List<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> execute(
+			final int delta) {
+
+		int randDelta = delta;
+		final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(randDelta);
 		final DataSet<Tuple7<Double, Double, Double, Double, String, String, String>> lineitems = readLineitem();
 
 		try {
@@ -153,9 +157,4 @@ public class Query1 extends Query {
 		return source.fieldDelimiter("|").includeFields("0000111111100000").types(Double.class, Double.class,
 				Double.class, Double.class, String.class, String.class, String.class);
 	}
-
-	public void setDelta(final int delta) {
-		this.delta = delta;
-	}
-
 }
