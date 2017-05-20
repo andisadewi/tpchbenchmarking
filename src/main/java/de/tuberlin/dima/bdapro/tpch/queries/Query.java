@@ -28,7 +28,7 @@ public abstract class Query {
 	 * @return the CSV Reader
 	 */
 	protected CsvReader getCSVReader(final String tableName) {
-		return getEnv().readCsvFile(Config.BASE_DIR + sf + "/" + tableName);
+		return env.readCsvFile(Config.BASE_DIR + sf + "/" + tableName);
 	}
 
 	public abstract List<? extends Tuple> execute();
@@ -76,9 +76,5 @@ public abstract class Query {
 	public static double getRandomDouble(final double bottomLimit, final double upperLimit) {
 		final Random rand = new Random();
 		return bottomLimit + (upperLimit - bottomLimit) * rand.nextDouble();
-	}
-
-	public ExecutionEnvironment getEnv() {
-		return env;
 	}
 }
