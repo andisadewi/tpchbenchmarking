@@ -60,4 +60,5 @@ public class Config {
 			return values()[random].getName();
 		}
 	}
+
 }
