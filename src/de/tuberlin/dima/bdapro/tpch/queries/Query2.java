@@ -85,8 +85,8 @@ public class Query2 {
 		DataSet<Tuple> 
 		finalResult =
 				PSNationAndRegion.join(minCost).where(2).equalTo(2)
-		.projectFirst(0,1,3,4,5,6,7,8).sortPartition(4, Order.DESCENDING).sortPartition(7, Order.ASCENDING)
-		.sortPartition(2, Order.ASCENDING).sortPartition(0, Order.ASCENDING);
+		.projectFirst(5,3,8,0,1,4,5,7).sortPartition(0, Order.DESCENDING).sortPartition(1, Order.ASCENDING)
+		.sortPartition(2, Order.ASCENDING).sortPartition(3, Order.ASCENDING);
 		
 		try {
 			System.out.println("The result of the query is: ");
