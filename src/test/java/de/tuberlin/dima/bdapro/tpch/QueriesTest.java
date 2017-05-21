@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
+import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple8;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import de.tuberlin.dima.bdapro.tpch.queries.Query1;
 import de.tuberlin.dima.bdapro.tpch.queries.Query10;
 import de.tuberlin.dima.bdapro.tpch.queries.Query6;
+import de.tuberlin.dima.bdapro.tpch.queries.Query7;
 
 public class QueriesTest {
 
@@ -58,6 +60,24 @@ public class QueriesTest {
 			}
 		}
 		fail("Query6 failed");
+
+	}
+
+	@Test
+	public void Query7() {
+		final Query7 q7 = new Query7(env, "1.0");
+		final List<Tuple4<String, String, Integer, Double>> result = q7.execute("FRANCE", "GERMANY");
+
+		final Tuple4<String, String, Integer, Double> expected = new Tuple4<String, String, Integer, Double>("FRANCE",
+				"GERMANY", 1995, 54639732.73);
+
+		for (final Tuple4<String, String, Integer, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query7 failed");
 
 	}
 
