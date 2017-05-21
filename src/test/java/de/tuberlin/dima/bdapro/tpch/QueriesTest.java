@@ -3,8 +3,11 @@ package de.tuberlin.dima.bdapro.tpch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 
+import de.tuberlin.dima.bdapro.tpch.queries.Query3;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
@@ -45,7 +48,27 @@ public class QueriesTest {
 		fail("Query1 failed");
 
 	}
+	@Test
+	public void Query3() {
+		final Query3 q3 = new Query3(env, "1.0");
+		q3.setSegment("BUILDING");
+		q3.setDate(LocalDate.of(1995,03,15));
 
+		final List<Tuple4<Long, Double, String, Long>> result = q3.execute();
+		Integer i = 2456423;
+		Integer j = 0;
+		final Tuple4<Long, Double, String, Long> validation = new Tuple4<Long, Double, String, Long>(
+				i.longValue(), 406181.01, "1995-03-05", j.longValue());
+
+		for (final Tuple4<Long, Double, String, Long> elem : result) {
+			if (elem.equals(validation)) {
+				assertEquals(validation, elem);
+				return;
+			}
+		}
+		fail("Query3 failed");
+
+	}
 	@Test
 	public void Query6() {
 		final Query6 q6 = new Query6(env, "1.0");
@@ -100,5 +123,4 @@ public class QueriesTest {
 		fail("Query10 failed");
 
 	}
-
 }
