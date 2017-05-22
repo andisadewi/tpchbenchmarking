@@ -62,30 +62,33 @@ public class Query2 extends Query {
 			// Filter parrtTbl for the given random type and size
 			//PartTbl = PartTbl.filter(partRecord -> (partRecord.f3.contains(type)) && (partRecord.f4.equals(size)));		
 			
-			
-			PartTbl = PartTbl.filter(new FilterFunction<Tuple5<Integer, String, String, String, Integer>>() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public boolean filter(
-						final Tuple5<Integer, String, String, String, Integer> partRecord)
-						throws Exception {
-					return (partRecord.f3.contains(type)) && (partRecord.f4.equals(size));
-				}
-			});
+			PartTbl = PartTbl.filter(filterParts(type, size));
+//			
+//			PartTbl = PartTbl.filter(new FilterFunction<Tuple5<Integer, String, String, String, Integer>>() {
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public boolean filter(
+//						final Tuple5<Integer, String, String, String, Integer> partRecord)
+//						throws Exception {
+//					return (partRecord.f3.contains(type)) && (partRecord.f4.equals(size));
+//				}
+//			});
 			// Filter RegionTbl for the given random region
 			//RegionTbl = RegionTbl.filter(regionRecord -> regionRecord.f1.equals(region));
 			
-			RegionTbl = RegionTbl.filter(new FilterFunction<Tuple2<Integer, String>>() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public boolean filter(
-						final Tuple2<Integer, String> regionRecord)
-						throws Exception {
-					return regionRecord.f1.equals(region);
-				}
-			});
+			RegionTbl = RegionTbl.filter(filterRegions(region));
+			
+//			RegionTbl = RegionTbl.filter(new FilterFunction<Tuple2<Integer, String>>() {
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public boolean filter(
+//						final Tuple2<Integer, String> regionRecord)
+//						throws Exception {
+//					return regionRecord.f1.equals(region);
+//				}
+//			});
 			
 			// Join Part and PartSupp, to get the supplier and cost information
 			// for the asked parts
@@ -209,4 +212,15 @@ public class Query2 extends Query {
 	private int getRandomSize() {
 		return ThreadLocalRandom.current().nextInt(1, 50 + 1);
 	}
+	
+	//filter part 
+	private FilterFunction<Tuple5<Integer, String, String, String, Integer>> filterParts(String typ, int sz) {
+        return (FilterFunction<Tuple5<Integer, String, String, String, Integer>>) partRecord -> 
+        partRecord.f3.contains(typ) && partRecord.f4.equals(sz);
+    }
+	
+	//filter region
+	private FilterFunction<Tuple2<Integer, String>> filterRegions(String rgn) {
+        return (FilterFunction<Tuple2<Integer, String>>) r -> r.f1.equals(rgn);
+    }
 }
