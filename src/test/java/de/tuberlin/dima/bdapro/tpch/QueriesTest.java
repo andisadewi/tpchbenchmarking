@@ -17,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.tpch.queries.Query1;
+import de.tuberlin.dima.bdapro.tpch.queries.Query2;
+
 import de.tuberlin.dima.bdapro.tpch.queries.Query10;
 import de.tuberlin.dima.bdapro.tpch.queries.Query6;
 import de.tuberlin.dima.bdapro.tpch.queries.Query7;
@@ -48,6 +50,26 @@ public class QueriesTest {
 		fail("Query1 failed");
 
 	}
+	
+	@Test
+	public void Query2() {
+		final Query2 q2 = new Query2(env, "1.0");
+		final  List<Tuple8<Double, String, String, Integer, String, String, String, String>> result = q2.execute("BRASS", 15, "EUROPE");
+
+		final Tuple8<Double, String, String, Integer, String, String, String, String> expected = 
+				new Tuple8<Double, String, String, Integer, String, String, String, String>(
+				9938.53, "Supplier#000005359", "UNITED KINGDOM", 185358, "Manufacturer#4", "QKuHYh,vZGiwu2FWEJoLDx04", "33-429-790-6131", "uriously regular requests hag");
+
+		for (final Tuple8<Double, String, String, Integer, String, String, String, String> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query2 failed");
+
+	}
+	
 	@Test
 	public void Query3() {
 		final Query3 q3 = new Query3(env, "1.0");

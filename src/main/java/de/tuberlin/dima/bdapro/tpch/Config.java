@@ -17,6 +17,12 @@ public class Config {
 
 	public static final String SUPPLIER = "supplier.tbl";
 	
+	public static final String REGION = "region.tbl";
+	
+	public static final String PART = "part.tbl";
+	
+	public static final String PARTSUPP = "partsupp.tbl";
+
 	
 	public enum Nation{
 		ALGERIA("ALGERIA"), 
