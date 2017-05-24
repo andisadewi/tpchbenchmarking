@@ -13,6 +13,7 @@ import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.io.CsvReader;
+import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
@@ -59,70 +60,50 @@ public class Query2 extends Query {
 		DataSet<Tuple2<Integer, String>> RegionTbl = readRegion();
 		
 		try {
-			// Filter parrtTbl for the given random type and size
-			//PartTbl = PartTbl.filter(partRecord -> (partRecord.f3.contains(type)) && (partRecord.f4.equals(size)));		
 			
 			PartTbl = PartTbl.filter(filterParts(type, size));
-//			
-//			PartTbl = PartTbl.filter(new FilterFunction<Tuple5<Integer, String, String, String, Integer>>() {
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public boolean filter(
-//						final Tuple5<Integer, String, String, String, Integer> partRecord)
-//						throws Exception {
-//					return (partRecord.f3.contains(type)) && (partRecord.f4.equals(size));
-//				}
-//			});
-			// Filter RegionTbl for the given random region
-			//RegionTbl = RegionTbl.filter(regionRecord -> regionRecord.f1.equals(region));
-			
 			RegionTbl = RegionTbl.filter(filterRegions(region));
 			
-//			RegionTbl = RegionTbl.filter(new FilterFunction<Tuple2<Integer, String>>() {
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public boolean filter(
-//						final Tuple2<Integer, String> regionRecord)
-//						throws Exception {
-//					return regionRecord.f1.equals(region);
-//				}
-//			});
+			//Part(p_partkey(int), p_name(String), p_mfgr(String), p_type(String),  p_size(int))
+			//Partsupp(ps_partkey(int), ps_suppkey(int), ps_suplycost(Double))
+			//Result(p_partkey(int), p_mfgr(String), ps_suppkey(int), ps_suplycost(Double))
+			DataSet<Tuple9<Integer, String, Double, String, String, Integer, String, Double, String>> outterQuery = 
+					PartTbl.join(PartSuppTbl).where(0).equalTo(0).projectFirst(0,2).projectSecond(1,2)
 			
-			// Join Part and PartSupp, to get the supplier and cost information
-			// for the asked parts
+			//partsWithSupplyDetail(p_partkey(int), p_mfgr(String), ps_suppkey(int), ps_suplycost(Double))
+			//SUPPLIER(s_suppkey(int), s_name(String), s_address(String), s_nationkey(int), s_phone(String), s_acctbal(double), s_comment(String));
+			//Result(p_partkey, p_mfgr, ps_suplycost, s_name, s_address, s_nationkey, s_phone, s_acctbal, s_comment);
+					.join(SupplierTbl).where(2).equalTo(0).projectFirst(0,1,3).projectSecond(1,2,3,4,5,6)
 			
-			DataSet<Tuple4<Integer, String, Integer, Double>> partsWithSupplyDetail =
-					PartTbl.join(PartSuppTbl).where(0).equalTo(0).projectFirst(0,2).projectSecond(1,2);
+			// partsWithSupplierDetail(p_partkey, p_mfgr, ps_suplycost, s_name, s_address, s_nationkey, s_phone, s_acctbal, s_comment);
+			// Nation(n_nationkey(int), n_name(String), n_regionkey(int))
+			// Result(p_partkey, p_mfgr, ps_suplycost, s_name, s_address, s_phone, s_acctbal, s_comment, n_name, n_regionkey);
+
+					.join(NationTbl).where(5).equalTo(0).projectFirst(0,1,2,3,4,6,7,8).projectSecond(1,2)
 			
-			
-			DataSet<Tuple9<Integer, String, Double, String, String, Integer, String, Double, String>> 
-					partsWithSupplierDetail =
-					partsWithSupplyDetail.join(SupplierTbl).where(2).equalTo(0)
-					.projectFirst(0,1,3).projectSecond(1,2,3,4,5,6);
-			
-			DataSet<Tuple10<Integer, String, Double, String, String, String, Double, String, String, Integer>> 
-			partSupplierNation =
-					partsWithSupplierDetail.join(NationTbl).where(5).equalTo(0)
-			.projectFirst(0,1,2,3,4,6,7,8).projectSecond(1,2);
-			
-			DataSet<Tuple9<Integer, String, Double, String, String, Integer, String, Double, String>> 
-			PSNationAndRegion =
-					partSupplierNation.join(RegionTbl).where(9).equalTo(0)
-			.projectFirst(0,1,2,3,4,5,6,7,8);
+			// partSupplierNation(p_partkey, p_mfgr, ps_suplycost, s_name, s_address, s_phone, s_acctbal, s_comment, n_name, n_regionkey);
+			// Region(r_regionkey, r_name)
+			// Result(p_partkey, p_mfgr, ps_suplycost, s_name, s_address, s_phone, s_acctbal, s_comment, n_name)
+			.join(RegionTbl).where(9).equalTo(0).projectFirst(0,1,2,3,4,5,6,7,8);
 			
 			//Find min cost
-			DataSet<Tuple9<Integer, String, Double, String, String, Integer, String, Double, String>> 
-			minCost = PSNationAndRegion.minBy(2);		
 			
+			DataSet<Tuple2<Integer, Double>> innerQuery = 
+			// Result at this join tempTbl(ps_suplycost, ps_nationkey)
+			PartSuppTbl.join(SupplierTbl).where(1).equalTo(0).projectFirst(0,2).projectSecond(3)
+			// Result at this join tempTbl(ps_suplycost, n_regionkey)
+			.join(NationTbl).where(2).equalTo(0).projectFirst(0,1).projectSecond(2)
+			// Result at this join tempTbl(ps_suplycost)
+			.join(RegionTbl).where(2).equalTo(0).projectFirst(0,1);
+			
+			DataSet<Tuple2<Integer, Double>> minCost = innerQuery.groupBy(0).minBy(1);
+						
 			// FInal result (s_acctbal, s_name, n_name, p_partkey, p_mfgr, s_address, s_phone, s_comment)
 			DataSet<Tuple8<Double, String, String, Integer, String, String, String, String>>
 			finalResult =
-					PSNationAndRegion.join(minCost).where(2).equalTo(2)
+					outterQuery.join(minCost).where(2).equalTo(1)
 			.projectFirst(6,3,8,0,1,4,5,7);
 			
-			finalResult.print();
 			// Generate the list to return
 			
 			List<Tuple8<Double, String, String, Integer, String, String, String, String>> out = finalResult
@@ -139,8 +120,10 @@ public class Query2 extends Query {
 		                    }
 		                }).sortPartition(0, Order.DESCENDING).sortPartition(1, Order.ASCENDING)
 					.sortPartition(2, Order.ASCENDING).sortPartition(3, Order.ASCENDING)
+					.first(100)
 					.collect();
 			return out;
+			
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
@@ -216,7 +199,7 @@ public class Query2 extends Query {
 	//filter part 
 	private FilterFunction<Tuple5<Integer, String, String, String, Integer>> filterParts(String typ, int sz) {
         return (FilterFunction<Tuple5<Integer, String, String, String, Integer>>) partRecord -> 
-        partRecord.f3.contains(typ) && partRecord.f4.equals(sz);
+        partRecord.f3.endsWith(typ) && partRecord.f4.equals(sz);
     }
 	
 	//filter region
