@@ -1,10 +1,21 @@
 package de.tuberlin.dima.bdapro.tpch.queries;
 
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
+import org.apache.flink.api.common.functions.FilterFunction;
+import org.apache.flink.api.common.functions.JoinFunction;
+import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.api.common.operators.Order;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.aggregation.Aggregations;
 import org.apache.flink.api.java.io.CsvReader;
+import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
@@ -12,7 +23,10 @@ import org.apache.flink.api.java.tuple.Tuple4;
 import de.tuberlin.dima.bdapro.tpch.Config;
 
 public class Query5 extends Query {
-
+	// Region list to select one randomly for query
+	private List<String> regionList = new ArrayList<>(Arrays.asList("AFRICA", "AMERICA", "ASIA", "EUROPE", "MIDDLE EAST"));
+	String region = getRandomItem(regionList);
+	LocalDate randDate = LocalDate.parse(getRandomInt(1993, 1997) + "-01-01");
 	public Query5(ExecutionEnvironment env, String sf) {
 		super(env, sf);
 		// TODO Auto-generated constructor stub
@@ -33,18 +47,78 @@ public class Query5 extends Query {
 	 * 
 	 */
 	
+	public List<Tuple2<String, Double>> execute(String testRegion, String testDate) {
+		region = testRegion;
+		randDate = LocalDate.parse(testDate);
+		return execute();
+	}
 	@Override
 	public List<Tuple2<String, Double>> execute() {
 		// TODO Auto-generated method stub
-		
+
+		// Customer(c_custkey, c_nationkey)
 		final DataSet<Tuple2<Integer, Integer>> customers = readCustomers();
-		final DataSet<Tuple3<Integer, Integer, String>> orders = readOrders();
+		// Orders(o_orderkey, o_custkey, o_orderdate)
+		DataSet<Tuple3<Integer, Integer, String>> orders = readOrders();
+		// supplier(s_suppkey, s_nationkey)
 		final DataSet<Tuple2<Integer, Integer>> suppliers = readSuppliers();
+		// lineitem(l_orderkey, l_suppkey, l_extendedprice, l_discount)
 		final DataSet<Tuple4<Integer, Integer, Double, Double>> lineitems = readLineitem();
+		// nation(n_nationkey, n_name, n_regionkey) 
 		final DataSet<Tuple3<Integer, String, Integer>> nations = readNations();
-		final DataSet<Tuple2<Integer, Integer>> regions = readRegions();
+		// Region(r_regionkey, r_name)
+		DataSet<Tuple2<Integer, String>> regions = readRegions();
 		try{
-			final List<Tuple2<String, Double>> out = null;
+			// First filter the datasets for given random values
+			orders = orders.filter(filterOrders(randDate));
+			regions = regions.filter(filterRegions(region));
+			
+			
+			DataSet<Tuple3<String, Double, Double>> partialRes =
+			// the join result will be temptbl(c_nationkey, o_orderkey)
+			customers.joinWithHuge(orders).where(0).equalTo(1).projectFirst(1).projectSecond(0)
+			// the join result will be temptbl(c_nationkey, l_suppkey, l_extendedprice, l_discount)
+			.joinWithHuge(lineitems).where(1).equalTo(0).projectFirst(0).projectSecond(1,2,3)
+			// the join result will be temptbl(c_nationkey, l_extendedprice, l_discount)
+			.joinWithTiny(suppliers).where(0,1).equalTo(1,0).projectFirst(0,2,3)
+			// the join result will be temptbl(l_extendedprice, l_discount, n_name, n_regionkey)
+			.joinWithTiny(nations).where(0).equalTo(0).projectFirst(1,2).projectSecond(1,2)
+			// the join result will be temptbl(n_name, l_extendedprice, l_discount)
+			.joinWithTiny(regions).where(3).equalTo(0).projectFirst(2,0,1);
+			
+			final List<Tuple2<String, Double>> out = partialRes
+			.map(new MapFunction<Tuple3<String, Double, Double>, Tuple2<String, Double>>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Tuple2<String, Double> map(final Tuple3<String, Double, Double> value) throws Exception {
+					return new Tuple2<String, Double>(value.f0, value.f1 * (1 - value.f2));
+				}
+			}).groupBy(0).aggregate(Aggregations.SUM, 1).map(new MapFunction<Tuple2<String, Double>, Tuple2<String, Double>>() {
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Tuple2<String, Double> map(final Tuple2<String, Double> value) throws Exception {
+					return keepOnlyTwoDecimals(value);
+				}
+			})
+			.sortPartition(1, Order.DESCENDING)
+			.collect();
+			
+//			with(
+//                    new JoinFunction<Tuple4<Double, Double, String, Integer>, Tuple2<Integer, String>, Tuple2<String, Double>>() {
+//
+//                    	private static final long serialVersionUID = 1L;
+//
+//						@Override
+//                        public Tuple2<String, Double> join(Tuple4<Double, Double, String, Integer> tempTbl, Tuple2<Integer, String> regionTbl) {
+//							tempTbl.f0 = tempTbl.f0 * (1 - tempTbl.f1);
+//							return new Tuple2<String, Double>(tempTbl.f2, tempTbl.f0 * (1 - tempTbl.f1));
+//                            //return tempTbl;
+//                        }
+//                    });
+			
+			return out;
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -88,9 +162,29 @@ public class Query5 extends Query {
 	}
 	
 	//Read Regions 
-	private DataSet<Tuple2<Integer, Integer>> readRegions() {
+	private DataSet<Tuple2<Integer, String>> readRegions() {
 	final CsvReader source = getCSVReader(Config.REGION);
 	return source.fieldDelimiter("|").includeFields("110")
-			.types(Integer.class, Integer.class);
+			.types(Integer.class, String.class);
 	}
+	
+	// get a random item from a list of strings.
+	private String getRandomItem(List<String> list){
+		Random randomizer = new Random();
+		String random = list.get(randomizer.nextInt(list.size()));
+		return random;
+	}
+	
+	//filter orders
+	private FilterFunction<Tuple3<Integer, Integer, String>> filterOrders(LocalDate date) {
+        return (FilterFunction<Tuple3<Integer, Integer, String>>) value -> 
+        		(LocalDate.parse(value.f2).isEqual(date)
+				|| LocalDate.parse(value.f2).isAfter(date))
+        		&& (LocalDate.parse(value.f2).isBefore(date.plusYears(1)));
+    }
+		
+	//filter region
+	private FilterFunction<Tuple2<Integer, String>> filterRegions(String rgn) {
+        return (FilterFunction<Tuple2<Integer, String>>) r -> r.f1.equals(rgn);
+    }
 }
