@@ -20,6 +20,7 @@ import de.tuberlin.dima.bdapro.tpch.queries.Query1;
 import de.tuberlin.dima.bdapro.tpch.queries.Query10;
 import de.tuberlin.dima.bdapro.tpch.queries.Query2;
 import de.tuberlin.dima.bdapro.tpch.queries.Query3;
+import de.tuberlin.dima.bdapro.tpch.queries.Query5;
 import de.tuberlin.dima.bdapro.tpch.queries.Query6;
 import de.tuberlin.dima.bdapro.tpch.queries.Query7;
 import de.tuberlin.dima.bdapro.tpch.queries.Query8;
@@ -68,6 +69,23 @@ public class QueriesTest {
 			}
 		}
 		fail("Query2 failed");
+
+	}
+
+	@Test
+	public void Query5() {
+		final Query5 q5 = new Query5(env, "1.0");
+		final List<Tuple2<String, Double>> result = q5.execute("ASIA", "1994-01-01");
+
+		final Tuple2<String, Double> expected = new Tuple2<String, Double>("INDONESIA", 55502041.17);
+
+		for (final Tuple2<String, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query5 failed");
 
 	}
 
