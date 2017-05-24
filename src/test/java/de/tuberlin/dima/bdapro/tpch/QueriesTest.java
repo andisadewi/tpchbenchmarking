@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.tpch.Config.Nation;
+import de.tuberlin.dima.bdapro.tpch.queries.Query;
 import de.tuberlin.dima.bdapro.tpch.queries.Query1;
 import de.tuberlin.dima.bdapro.tpch.queries.Query10;
 import de.tuberlin.dima.bdapro.tpch.queries.Query2;
@@ -73,23 +74,6 @@ public class QueriesTest {
 	}
 
 	@Test
-	public void Query5() {
-		final Query5 q5 = new Query5(env, "1.0");
-		final List<Tuple2<String, Double>> result = q5.execute("ASIA", "1994-01-01");
-
-		final Tuple2<String, Double> expected = new Tuple2<String, Double>("INDONESIA", 55502041.17);
-
-		for (final Tuple2<String, Double> elem : result) {
-			if (elem.equals(expected)) {
-				assertEquals(expected, elem);
-				return;
-			}
-		}
-		fail("Query5 failed");
-
-	}
-
-	@Test
 	public void Query3() {
 		final Query3 q3 = new Query3(env, "1.0");
 		q3.setSegment("BUILDING");
@@ -110,6 +94,24 @@ public class QueriesTest {
 		fail("Query3 failed");
 
 	}
+
+	@Test
+	public void Query5() {
+		final Query5 q5 = new Query5(env, "1.0");
+		final List<Tuple2<String, Double>> result = q5.execute("ASIA", "1994-01-01");
+
+		final Tuple2<String, Double> expected = new Tuple2<String, Double>("INDONESIA", 55502041.17);
+
+		for (final Tuple2<String, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query5 failed");
+
+	}
+
 	@Test
 	public void Query6() {
 		final Query6 q6 = new Query6(env, "1.0");
@@ -132,8 +134,8 @@ public class QueriesTest {
 		final Query7 q7 = new Query7(env, "1.0");
 		final List<Tuple4<String, String, Integer, Double>> result = q7.execute(Nation.FRANCE.getName(), Nation.GERMANY.getName());
 
-		final Tuple4<String, String, Integer, Double> expected = new Tuple4<String, String, Integer, Double>("FRANCE",
-				"GERMANY", 1995, 54639732.73);
+		final Tuple4<String, String, Integer, Double> expected = new Tuple4<String, String, Integer, Double>(Nation.FRANCE.getName(),
+				Nation.GERMANY.getName(), 1995, 54639732.73);
 
 		for (final Tuple4<String, String, Integer, Double> elem : result) {
 			if (elem.equals(expected)) {
@@ -148,7 +150,7 @@ public class QueriesTest {
 	@Test
 	public void Query8() {
 		final Query8 q8 = new Query8(env, "1.0");
-		final List<Tuple2<Integer, Double>> result = q8.execute(Nation.BRAZIL.getName(), Nation.BRAZIL.getRegion(), "ECONOMY ANODIZED STEEL");
+		final List<Tuple2<Integer, Double>> result = q8.execute(Nation.BRAZIL.getName(), Nation.BRAZIL.getRegion(), Query.getRandomType());
 
 		final Tuple2<Integer, Double> expected = new Tuple2<Integer, Double>(1995, 0.03);
 

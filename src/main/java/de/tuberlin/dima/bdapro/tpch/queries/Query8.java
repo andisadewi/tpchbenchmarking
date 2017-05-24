@@ -1,12 +1,7 @@
 package de.tuberlin.dima.bdapro.tpch.queries;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.GroupReduceFunction;
@@ -32,56 +27,57 @@ public class Query8 extends Query {
 	}
 
 	@Override
-	public List<Tuple2<Integer,Double>> execute() {
+	public List<Tuple2<Integer, Double>> execute() {
 		Nation nation = Nation.getRandomNationAndRegion();
 		return execute(nation.getName(), nation.getRegion(), Query.getRandomType());
 	}
 
-	public List<Tuple2<Integer,Double>> execute(final String nation, final String region, final String type) {
+	public List<Tuple2<Integer, Double>> execute(final String nation, final String region, final String type) {
 		// partkey, type
-		DataSet<Tuple2<Integer, String>> part = readPart()
-				.filter(new FilterFunction<Tuple2<Integer,String>>() {
-					private static final long serialVersionUID = 1L;
+		DataSet<Tuple2<Integer, String>> part = readPart().filter(new FilterFunction<Tuple2<Integer, String>>() {
+			private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean filter(final Tuple2<Integer, String> value) throws Exception {
-						return value.f1.equals(type);
-					}
-				});
+			@Override
+			public boolean filter(final Tuple2<Integer, String> value) throws Exception {
+				return value.f1.equals(type);
+			}
+		});
 
 		// suppkey, nationkey
 		DataSet<Tuple2<Integer, Integer>> supplier = readSupplier();
 
 		// orderkey, partkey, suppkey, volume
-		DataSet<Tuple4<Integer,Integer,Integer,Double>> lineitem = readLineitem()
-				.map(new MapFunction<Tuple5<Integer,Integer,Integer,Double,Double>, Tuple4<Integer,Integer,Integer,Double>>() {
+		DataSet<Tuple4<Integer, Integer, Integer, Double>> lineitem = readLineitem().map(
+				new MapFunction<Tuple5<Integer, Integer, Integer, Double, Double>, Tuple4<Integer, Integer, Integer, Double>>() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public Tuple4<Integer, Integer, Integer, Double> map(
 							final Tuple5<Integer, Integer, Integer, Double, Double> value) throws Exception {
-						return new Tuple4<Integer, Integer, Integer, Double>(value.f0, value.f1, value.f2, value.f3 * (1 - value.f4));
+						return new Tuple4<Integer, Integer, Integer, Double>(value.f0, value.f1, value.f2,
+								value.f3 * (1 - value.f4));
 					}
 				});
 
 		// orderkey, custkey, orderyear
 		DataSet<Tuple3<Integer, Integer, Integer>> orders = readOrders()
-				.filter(new FilterFunction<Tuple3<Integer,Integer,String>>() {
+				.filter(new FilterFunction<Tuple3<Integer, Integer, String>>() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public boolean filter(final Tuple3<Integer, Integer, String> value) throws Exception {
 						LocalDate val = LocalDate.parse(value.f2);
-						return (val.equals(LocalDate.of(1995, 1, 1)) || val.isAfter(LocalDate.of(1995, 1, 1))) && 
-								(val.equals(LocalDate.of(1996, 12, 31)) || val.isBefore(LocalDate.of(1996, 12, 31)));
+						return (val.equals(LocalDate.of(1995, 1, 1)) || val.isAfter(LocalDate.of(1995, 1, 1)))
+								&& (val.equals(LocalDate.of(1996, 12, 31)) || val.isBefore(LocalDate.of(1996, 12, 31)));
 					}
-				}).map(new MapFunction<Tuple3<Integer,Integer,String>, Tuple3<Integer, Integer, Integer>>() {
+				}).map(new MapFunction<Tuple3<Integer, Integer, String>, Tuple3<Integer, Integer, Integer>>() {
 					private static final long serialVersionUID = 1L;
 
 					@Override
 					public Tuple3<Integer, Integer, Integer> map(final Tuple3<Integer, Integer, String> value)
 							throws Exception {
-						return new Tuple3<Integer, Integer, Integer>(value.f0, value.f1, LocalDate.parse(value.f2).getYear());
+						return new Tuple3<Integer, Integer, Integer>(value.f0, value.f1,
+								LocalDate.parse(value.f2).getYear());
 					}
 				});
 
@@ -92,18 +88,18 @@ public class Query8 extends Query {
 		DataSet<Tuple3<Integer, String, Integer>> nations = readNation();
 
 		// regionkey, name
-		DataSet<Tuple2<Integer, String>> regions = readRegion()
-				.filter(new FilterFunction<Tuple2<Integer, String>>() {
-					private static final long serialVersionUID = 1L;
+		DataSet<Tuple2<Integer, String>> regions = readRegion().filter(new FilterFunction<Tuple2<Integer, String>>() {
+			private static final long serialVersionUID = 1L;
 
-					@Override
-					public boolean filter(final Tuple2<Integer, String> value) throws Exception {
-						return value.f1.equals(region);
-					}
-				});
+			@Override
+			public boolean filter(final Tuple2<Integer, String> value) throws Exception {
+				return value.f1.equals(region);
+			}
+		});
 
 		// join supplier with nation - suppkey, nationName
-		DataSet<Tuple2<Integer, String>> suppNation = supplier.joinWithTiny(nations).where(1).equalTo(0).projectFirst(0).projectSecond(1);
+		DataSet<Tuple2<Integer, String>> suppNation = supplier.joinWithTiny(nations).where(1).equalTo(0).projectFirst(0)
+				.projectSecond(1);
 
 		// join nation with region - nationkey
 		DataSet<Tuple1<Integer>> regionNation = nations.join(regions).where(2).equalTo(0).projectFirst(0);
@@ -112,51 +108,42 @@ public class Query8 extends Query {
 		DataSet<Tuple1<Integer>> custNation = customer.joinWithTiny(regionNation).where(1).equalTo(0).projectFirst(0);
 
 		// join orders with customers - orderkey, orderyear
-		DataSet<Tuple2<Integer, Integer>> orderCust = orders.join(custNation).where(1).equalTo(0).projectFirst(0,2);
+		DataSet<Tuple2<Integer, Integer>> orderCust = orders.join(custNation).where(1).equalTo(0).projectFirst(0, 2);
 
 		// join part with lineitem - orderkey, suppkey, volume
-		DataSet<Tuple3<Integer, Integer, Double>> partLineitem = part.joinWithHuge(lineitem).where(0).equalTo(1).projectSecond(0,2,3);
+		DataSet<Tuple3<Integer, Integer, Double>> partLineitem = part.joinWithHuge(lineitem).where(0).equalTo(1)
+				.projectSecond(0, 2, 3);
 
 		// join lineitem with orders - suppkey, orderyear, volume
-		DataSet<Tuple3<Integer, Integer, Double>> lineitemOrders = partLineitem.joinWithTiny(orderCust).where(0).equalTo(0).projectFirst(1).projectSecond(1).projectFirst(2);
+		DataSet<Tuple3<Integer, Integer, Double>> lineitemOrders = partLineitem.joinWithTiny(orderCust).where(0)
+				.equalTo(0).projectFirst(1).projectSecond(1).projectFirst(2);
 
 		// join supplier with lineitem - orderyear, volume, name
-		DataSet<Tuple3<Integer, Double, String>> innerJoin = suppNation.joinWithHuge(lineitemOrders).where(0).equalTo(0).projectSecond(1,2).projectFirst(1);
+		DataSet<Tuple3<Integer, Double, String>> innerJoin = suppNation.joinWithHuge(lineitemOrders).where(0).equalTo(0)
+				.projectSecond(1, 2).projectFirst(1);
 
 		try {
-			return innerJoin.reduceGroup(new GroupReduceFunction<Tuple3<Integer,Double,String>, Tuple2<Integer, Double>>() {
-				private static final long serialVersionUID = 1L;
+			return innerJoin.groupBy(0)
+					.reduceGroup(new GroupReduceFunction<Tuple3<Integer, Double, String>, Tuple2<Integer, Double>>() {
+						private static final long serialVersionUID = 1L;
 
-				private final Map<Integer, List<Tuple3<Integer,Double,String>>> map = new HashMap<Integer, List<Tuple3<Integer,Double,String>>>();
-
-				@Override
-				public void reduce(final Iterable<Tuple3<Integer, Double, String>> values, final Collector<Tuple2<Integer, Double>> out) throws Exception {
-					for(Tuple3<Integer, Double, String> tuple : values){
-						if(map.containsKey(tuple.f0)){
-							map.get(tuple.f0).add(tuple);
-						}else{
-							List<Tuple3<Integer, Double, String>> list = new ArrayList<Tuple3<Integer, Double, String>>();
-							list.add(tuple);
-							map.put(tuple.f0, list);
-						}
-					}
-
-					// calculate sum
-					Set<Entry<Integer, List<Tuple3<Integer, Double, String>>>> entrySet = map.entrySet();
-					for(Entry<Integer, List<Tuple3<Integer, Double, String>>> entry : entrySet){
-						double sum1 = 0;
-						double sum2 = 0;
-						for(Tuple3<Integer, Double, String> tuple : entry.getValue()){
-							if(tuple.f2.equals(nation)){
-								sum1 += tuple.f1;
+						@Override
+						public void reduce(final Iterable<Tuple3<Integer, Double, String>> values,
+								final Collector<Tuple2<Integer, Double>> out) throws Exception {
+							double sum1 = 0;
+							double sum2 = 0;
+							int year = 0;
+							for (Tuple3<Integer, Double, String> tuple : values) {
+								if (tuple.f2.equals(nation)) {
+									sum1 += tuple.f1;
+									year = tuple.f0;
+								}
+								sum2 += tuple.f1;
 							}
-							sum2 += tuple.f1;
-						}
-						out.collect(new Tuple2<Integer,Double>(entry.getKey(), convertToTwoDecimal(sum1/sum2)));
-					}
+							out.collect(new Tuple2<Integer, Double>(year, convertToTwoDecimal(sum1 / sum2)));
 
-				}
-			}).sortPartition(0, Order.ASCENDING).collect();
+						}
+					}).sortPartition(0, Order.ASCENDING).collect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
