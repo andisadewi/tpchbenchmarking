@@ -16,54 +16,69 @@ public class Config {
 	public static final String ORDERS = "orders.tbl";
 
 	public static final String SUPPLIER = "supplier.tbl";
-	
+
 	public static final String REGION = "region.tbl";
-	
+
 	public static final String PART = "part.tbl";
-	
+
 	public static final String PARTSUPP = "partsupp.tbl";
 
-	
+
 	public enum Nation{
-		ALGERIA("ALGERIA"), 
-		ARGENTINA("ARGENTINA"), 
-		BRAZIL("BRAZIL"),
-		CANADA("CANADA"),
-		EGYPT("EGYPT"),
-		ETHIOPIA("ETHIOPIA"),
-		FRANCE("FRANCE"),
-		GERMANY("GERMANY"),
-		INDIA("INDIA"),
-		INDONESIA("INDONESIA"),
-		IRAN("IRAN"),
-		IRAQ("IRAQ"),
-		JAPAN("JAPAN"),
-		JORDAN("JORDAN"),
-		KENYA("KENYA"),
-		MOROCCO("MOROCCO"),
-		MOZAMBIQUE("MOZAMBIQUE"),
-		PERU("PERU"),
-		CHINA("CHINA"),
-		ROMANIA("ROMANIA"),
-		SAUDI_ARABIA("SAUDI ARABIA"),
-		VIETNAM("VIETNAM"),
-		RUSSIA("RUSSIA"),
-		UNITED_KINGDOM("UNITED KINGDOM"),
-		UNITED_STATES("UNITED STATES");
-		
+		ALGERIA("ALGERIA", "AFRICA"), 
+		ARGENTINA("ARGENTINA", "AMERICA"), 
+		BRAZIL("BRAZIL", "AMERICA"),
+		CANADA("CANADA", "AMERICA"),
+		EGYPT("EGYPT", "MIDDLE EAST"),
+		ETHIOPIA("ETHIOPIA", "AFRICA"),
+		FRANCE("FRANCE", "EUROPE"),
+		GERMANY("GERMANY", "EUROPE"),
+		INDIA("INDIA", "ASIA"),
+		INDONESIA("INDONESIA", "ASIA"),
+		IRAN("IRAN", "MIDDLE EAST"),
+		IRAQ("IRAQ", "MIDDLE EAST"),
+		JAPAN("JAPAN", "ASIA"),
+		JORDAN("JORDAN", "MIDDLE EAST"),
+		KENYA("KENYA", "AFRICA"),
+		MOROCCO("MOROCCO", "AFRICA"),
+		MOZAMBIQUE("MOZAMBIQUE", "AFRICA"),
+		PERU("PERU", "AMERICA"),
+		CHINA("CHINA", "ASIA"),
+		ROMANIA("ROMANIA", "EUROPE"),
+		SAUDI_ARABIA("SAUDI ARABIA", "MIDDLE EAST"),
+		VIETNAM("VIETNAM", "ASIA"),
+		RUSSIA("RUSSIA", "EUROPE"),
+		UNITED_KINGDOM("UNITED KINGDOM", "EUROPE"),
+		UNITED_STATES("UNITED STATES", "AMERICA");
+
 		private String name;
-		
-		private Nation(String value){
+
+		private String region;
+
+		private Nation(final String value, final String region){
 			this.name = value;
+			this.region = region;
 		}
-		
+
 		public String getName(){
 			return this.name;
 		}
-		
-		public static String getRandomNation(){
+
+		public String getRegion(){
+			return this.region;
+		}
+
+		public static Nation getRandomNationAndRegion(){
 			int random = new Random().nextInt(values().length);
-			return values()[random].getName();
+			return values()[random];
+		}
+
+		public static String getRandomNation(){
+			return getRandomNationAndRegion().getName();
+		}
+
+		public static String getRandomRegion(){
+			return getRandomNationAndRegion().getRegion();
 		}
 	}
 

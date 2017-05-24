@@ -5,23 +5,24 @@ import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
 
-import de.tuberlin.dima.bdapro.tpch.queries.Query3;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple8;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tuberlin.dima.bdapro.tpch.Config.Nation;
 import de.tuberlin.dima.bdapro.tpch.queries.Query1;
-import de.tuberlin.dima.bdapro.tpch.queries.Query2;
-
 import de.tuberlin.dima.bdapro.tpch.queries.Query10;
+import de.tuberlin.dima.bdapro.tpch.queries.Query2;
+import de.tuberlin.dima.bdapro.tpch.queries.Query3;
 import de.tuberlin.dima.bdapro.tpch.queries.Query6;
 import de.tuberlin.dima.bdapro.tpch.queries.Query7;
+import de.tuberlin.dima.bdapro.tpch.queries.Query8;
 
 public class QueriesTest {
 
@@ -50,7 +51,7 @@ public class QueriesTest {
 		fail("Query1 failed");
 
 	}
-	
+
 	@Test
 	public void Query2() {
 		final Query2 q2 = new Query2(env, "1.0");
@@ -58,7 +59,7 @@ public class QueriesTest {
 
 		final Tuple8<Double, String, String, Integer, String, String, String, String> expected = 
 				new Tuple8<Double, String, String, Integer, String, String, String, String>(
-				9938.53, "Supplier#000005359", "UNITED KINGDOM", 185358, "Manufacturer#4", "QKuHYh,vZGiwu2FWEJoLDx04", "33-429-790-6131", "uriously regular requests hag");
+						9938.53, "Supplier#000005359", "UNITED KINGDOM", 185358, "Manufacturer#4", "QKuHYh,vZGiwu2FWEJoLDx04", "33-429-790-6131", "uriously regular requests hag");
 
 		for (final Tuple8<Double, String, String, Integer, String, String, String, String> elem : result) {
 			if (elem.equals(expected)) {
@@ -69,7 +70,7 @@ public class QueriesTest {
 		fail("Query2 failed");
 
 	}
-	
+
 	@Test
 	public void Query3() {
 		final Query3 q3 = new Query3(env, "1.0");
@@ -111,7 +112,7 @@ public class QueriesTest {
 	@Test
 	public void Query7() {
 		final Query7 q7 = new Query7(env, "1.0");
-		final List<Tuple4<String, String, Integer, Double>> result = q7.execute("FRANCE", "GERMANY");
+		final List<Tuple4<String, String, Integer, Double>> result = q7.execute(Nation.FRANCE.getName(), Nation.GERMANY.getName());
 
 		final Tuple4<String, String, Integer, Double> expected = new Tuple4<String, String, Integer, Double>("FRANCE",
 				"GERMANY", 1995, 54639732.73);
@@ -127,13 +128,30 @@ public class QueriesTest {
 	}
 
 	@Test
+	public void Query8() {
+		final Query8 q8 = new Query8(env, "1.0");
+		final List<Tuple2<Integer, Double>> result = q8.execute(Nation.BRAZIL.getName(), Nation.BRAZIL.getRegion(), "ECONOMY ANODIZED STEEL");
+
+		final Tuple2<Integer, Double> expected = new Tuple2<Integer, Double>(1995, 0.03);
+
+		for (final Tuple2<Integer, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query8 failed");
+
+	}
+
+	@Test
 	public void Query10() {
 		final Query10 q10 = new Query10(env, "1.0");
 		final List<Tuple8<Integer, String, Double, Double, String, String, String, String>> result = q10
 				.execute("1993-10-01");
 
 		final Tuple8<Integer, String, Double, Double, String, String, String, String> expected = new Tuple8<Integer, String, Double, Double, String, String, String, String>(
-				57040, "Customer#000057040", 734235.24, 632.87, "JAPAN", "Eioyzjf4pp", "22-895-641-3466",
+				57040, "Customer#000057040", 734235.24, 632.87, Nation.JAPAN.getName(), "Eioyzjf4pp", "22-895-641-3466",
 				"sits. slyly regular requests sleep alongside of the regular inst");
 
 		for (final Tuple8<Integer, String, Double, Double, String, String, String, String> elem : result) {

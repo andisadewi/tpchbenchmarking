@@ -1,5 +1,7 @@
 package de.tuberlin.dima.bdapro.tpch.queries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -77,4 +79,39 @@ public abstract class Query {
 		final Random rand = new Random();
 		return bottomLimit + (upperLimit - bottomLimit) * rand.nextDouble();
 	}
+
+	private static final List<String> SEGMENTS = new ArrayList<>(Arrays.asList("AUTOMOBILE", "BUILDING", "FURNITURE", "MACHINERY","HOUSEHOLD"));
+
+	private static final List<String> TYPE_SYL3 = new ArrayList<>(Arrays.asList("TIN", "NICKEL", "BRASS", "STEEL", "COPPER"));
+
+	private static final List<String> TYPE_SYL2 = new ArrayList<>(Arrays.asList("ANODIZED", "BURNISHED", "PLATED", "POLISHED", "BRUSHED"));
+
+	private static final List<String> TYPE_SYL1 = new ArrayList<>(Arrays.asList("STANDARD", "SMALL", "MEDIUM", "LARGE", "ECONOMY", "PROMO"));
+
+	private static String getRandomElementFromList(final List<String> list){
+		Random rand = new Random();
+		return list.get(rand.nextInt(list.size()));
+	}
+
+	public static String getRandomSegment() {
+		return getRandomElementFromList(SEGMENTS);
+	}
+
+	public static String getRandomType() {
+		return getRandomElementFromList(TYPE_SYL1) + " " + getRandomElementFromList(TYPE_SYL2) + " " + getRandomElementFromList(TYPE_SYL3);
+	}
+
+	public static String getRandomTypeSyl1() {
+		return getRandomElementFromList(TYPE_SYL1);
+	}
+
+	public static String getRandomTypeSyl2() {
+		return getRandomElementFromList(TYPE_SYL2);
+	}
+
+	public static String getRandomTypeSyl3() {
+		return getRandomElementFromList(TYPE_SYL3);
+	}
+
+
 }
