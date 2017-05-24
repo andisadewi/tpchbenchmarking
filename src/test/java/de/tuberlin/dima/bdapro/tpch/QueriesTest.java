@@ -26,6 +26,12 @@ import de.tuberlin.dima.bdapro.tpch.queries.Query6;
 import de.tuberlin.dima.bdapro.tpch.queries.Query7;
 import de.tuberlin.dima.bdapro.tpch.queries.Query8;
 
+import de.tuberlin.dima.bdapro.tpch.queries.*;
+import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.api.java.tuple.*;
+import org.junit.Before;
+import org.junit.Test;
+
 public class QueriesTest {
 
 	private ExecutionEnvironment env;
@@ -94,7 +100,25 @@ public class QueriesTest {
 		fail("Query3 failed");
 
 	}
+	@Test
+	public void Query4() {
+		final Query4 q4 = new Query4(env, "1.0");
+		q4.setDate(LocalDate.of(1993,07,01));
 
+		final List<Tuple2<String,Long>> result = q4.execute();
+		Integer i = 10594;
+		final Tuple2<String, Long> validation = new Tuple2<String, Long>(
+				"1-URGENT", i.longValue());
+
+		for (final Tuple2<String, Long> elem : result) {
+			if (elem.equals(validation)) {
+				assertEquals(validation, elem);
+				return;
+			}
+		}
+		fail("Query4 failed");
+
+	}
 	@Test
 	public void Query5() {
 		final Query5 q5 = new Query5(env, "1.0");
