@@ -7,11 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.tuple.Tuple1;
-import org.apache.flink.api.java.tuple.Tuple10;
-import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.api.java.tuple.Tuple4;
-import org.apache.flink.api.java.tuple.Tuple8;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -205,6 +200,25 @@ public class QueriesTest {
 			}
 		}
 		fail("Query10 failed");
+
+	}
+	
+	@Test
+	public void Query15() {
+		final Query15 q15 = new Query15(env, "1.0");
+		final List<Tuple5<Integer, String, String, String, Double>> result = q15.execute("1996-01-01");
+
+		final Tuple5<Integer, String, String, String, Double> expected = 
+				new Tuple5<Integer, String, String, String, Double>
+				(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
+
+		for (final Tuple5<Integer, String, String, String, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query15 failed");
 
 	}
 }
