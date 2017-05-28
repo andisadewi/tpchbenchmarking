@@ -22,10 +22,7 @@ import de.tuberlin.dima.bdapro.tpch.queries.Query7;
 import de.tuberlin.dima.bdapro.tpch.queries.Query8;
 
 import de.tuberlin.dima.bdapro.tpch.queries.*;
-import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.*;
-import org.junit.Before;
-import org.junit.Test;
 
 public class QueriesTest {
 
@@ -219,6 +216,24 @@ public class QueriesTest {
 			}
 		}
 		fail("Query15 failed");
+
+	}
+	
+	@Test
+	public void Query18() {
+		final Query18 q18 = new Query18(env, "1.0");
+		final List<Tuple6<String, Integer, Integer, String, Double, Double>> result = q18.execute(300);
+		final Tuple6<String, Integer, Integer, String, Double, Double> expected = 
+				new Tuple6<String, Integer, Integer, String, Double, Double>
+				("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
+
+		for (final Tuple6<String, Integer, Integer, String, Double, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query18 failed");
 
 	}
 }

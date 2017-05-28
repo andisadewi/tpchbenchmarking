@@ -102,20 +102,8 @@ public class Query5 extends Query {
 			.sortPartition(1, Order.DESCENDING)
 			.collect();
 			
-//			with(
-//                    new JoinFunction<Tuple4<Double, Double, String, Integer>, Tuple2<Integer, String>, Tuple2<String, Double>>() {
-//
-//                    	private static final long serialVersionUID = 1L;
-//
-//						@Override
-//                        public Tuple2<String, Double> join(Tuple4<Double, Double, String, Integer> tempTbl, Tuple2<Integer, String> regionTbl) {
-//							tempTbl.f0 = tempTbl.f0 * (1 - tempTbl.f1);
-//							return new Tuple2<String, Double>(tempTbl.f2, tempTbl.f0 * (1 - tempTbl.f1));
-//                            //return tempTbl;
-//                        }
-//                    });
-			
 			return out;
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
