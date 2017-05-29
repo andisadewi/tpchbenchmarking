@@ -4,7 +4,7 @@
 
 	<parent>
 		<groupId>de.tuberlin.dima.bdapro</groupId>
-		<artifactId>tpch_ml_benchmarking</artifactId>
+		<artifactId>tpchmlbenchmarking</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 

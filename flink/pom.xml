@@ -14,7 +14,7 @@
 
 	<parent>
 		<groupId>de.tuberlin.dima.bdapro</groupId>
-		<artifactId>tpch_ml_benchmarking</artifactId>
+		<artifactId>tpchmlbenchmarking</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -68,6 +68,11 @@
 			<groupId>org.apache.flink</groupId>
 			<artifactId>flink-clients_2.10</artifactId>
 			<version>${flink.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-table_2.10</artifactId>
+			<version>1.2.0</version>
 		</dependency>
 
 		<dependency>
