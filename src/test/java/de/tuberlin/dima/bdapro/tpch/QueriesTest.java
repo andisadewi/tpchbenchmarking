@@ -210,12 +210,33 @@ public class QueriesTest {
 				(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
 
 		for (final Tuple5<Integer, String, String, String, Double> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query15 failed");
+
+    }
+
+	@Test
+	public void Query16() {
+		final Query16 q16 = new Query16(env, "1.0");
+        q16.setBrand("Brand#45");
+        q16.setType("MEDIUM POLISHED");
+		final List<Tuple4<String, String, Integer, Long>> result = q16
+				.execute();
+
+		final Tuple4<String, String, Integer, Long> expected = new Tuple4<String, String, Integer, Long>(
+				"Brand#41", "MEDIUM BRUSHED TIN", 3, (long) 28);
+
+		for (final Tuple4<String, String, Integer, Long> elem : result) {
 			if (elem.equals(expected)) {
 				assertEquals(expected, elem);
 				return;
 			}
 		}
-		fail("Query15 failed");
+		fail("Query16 failed");
 
 	}
 	
@@ -236,4 +257,5 @@ public class QueriesTest {
 		fail("Query18 failed");
 
 	}
+
 }

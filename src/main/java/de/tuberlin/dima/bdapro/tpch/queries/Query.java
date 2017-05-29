@@ -88,6 +88,10 @@ public abstract class Query {
 
 	private static final List<String> TYPE_SYL1 = new ArrayList<>(Arrays.asList("STANDARD", "SMALL", "MEDIUM", "LARGE", "ECONOMY", "PROMO"));
 
+	private static final List<String> CONTAINERS_SYL1 = new ArrayList<>(Arrays.asList("SM", "LG", "MED", "JUMBO", "WRAP"));
+
+	private static final List<String> CONTAINERS_SYL2 = new ArrayList<>(Arrays.asList("CASE", "BOX", "BAG", "JAR", "PKG", "PACK", "CAN", "DRUM"));
+
 	private static String getRandomElementFromList(final List<String> list){
 		Random rand = new Random();
 		return list.get(rand.nextInt(list.size()));
@@ -101,6 +105,19 @@ public abstract class Query {
 		return getRandomElementFromList(TYPE_SYL1) + " " + getRandomElementFromList(TYPE_SYL2) + " " + getRandomElementFromList(TYPE_SYL3);
 	}
 
+	public static String getRandomType2() {
+		return getRandomElementFromList(TYPE_SYL1) + " " + getRandomElementFromList(TYPE_SYL2);
+	}
+	public static String getRandomContainer() {
+		return getRandomElementFromList(CONTAINERS_SYL1) + " " + getRandomElementFromList(CONTAINERS_SYL2);
+	}
+
+	public static String getRandomBrand() {
+		Random rand = new Random();
+		String firstDigit = String.valueOf(rand.nextInt(6)+1);
+		String secondDigit = String.valueOf(rand.nextInt(6)+1);
+		return "Brand#" + firstDigit + secondDigit;
+	}
 	public static String getRandomTypeSyl1() {
 		return getRandomElementFromList(TYPE_SYL1);
 	}
