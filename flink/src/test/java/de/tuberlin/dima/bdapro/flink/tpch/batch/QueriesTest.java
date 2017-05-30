@@ -19,6 +19,7 @@ import org.junit.Test;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query11;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
@@ -28,12 +29,13 @@ public class QueriesTest {
 
 	private BatchTableEnvironment tableEnv;
 	private boolean loadedData = false;
+	private String sf = "1.0";
 
 	@Before
 	public void setUp() throws Exception {
 		if(!loadedData){
 			ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-			tableEnv = TableSourceProvider.loadData(env, "1.0");
+			tableEnv = TableSourceProvider.loadData(env, sf);
 			loadedData = true;
 		}	
 	}
@@ -143,6 +145,23 @@ public class QueriesTest {
 			}
 		}
 		fail("Query10 failed");
+
+	}
+
+	@Test
+	public void Query11() {
+		final Query11 q11 = new Query11(tableEnv, sf);
+		final List<Tuple2<Integer, Double>> result = q11.execute(Nation.GERMANY.getName(), 0.0001);
+
+		final Tuple2<Integer, Double> expected = new Tuple2<Integer, Double>(129760, 17538456.86);
+
+		for (final Tuple2<Integer, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query11 failed");
 
 	}
 }
