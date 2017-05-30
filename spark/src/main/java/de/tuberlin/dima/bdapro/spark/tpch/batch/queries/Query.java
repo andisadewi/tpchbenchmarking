@@ -9,6 +9,8 @@ public abstract class Query {
 
 	protected SparkSession spark;
 
+	public Query(){}
+
 	public Query(final SparkSession spark) {
 		this.spark = spark;
 	}

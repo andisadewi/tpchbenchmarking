@@ -11,9 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.spark.tpch.Utils;
+import de.tuberlin.dima.bdapro.spark.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query1;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query7;
 
 public class QueriesTest {
 
@@ -36,7 +38,7 @@ public class QueriesTest {
 		final List<Row> result = q1.execute(90);
 
 		for (final Row elem : result) {
-			System.out.println(elem.toString());
+
 			if (elem.getString(0).equals("A") &&
 					elem.getString(1).equals("F") &&
 					Utils.convertToTwoDecimal(elem.getDouble(2)) == 37734107.00 &&
@@ -67,6 +69,25 @@ public class QueriesTest {
 			}
 		}
 		fail("Query6 failed");
+
+	}
+
+	@Test
+	public void Query7() {
+		final Query7 q7 = new Query7(spark);
+		final List<Row> result = q7.execute(Nation.FRANCE.getName(), Nation.GERMANY.getName());
+
+		for (final Row elem : result) {
+			System.out.println(elem.toString());
+			if (elem.getString(0).equals("FRANCE") &&
+					elem.getString(1).equals("GERMANY") && 
+					elem.getString(2).equals("1995") && 
+					Utils.convertToTwoDecimal(elem.getDouble(3)) == 54639732.73) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query7 failed");
 
 	}
 

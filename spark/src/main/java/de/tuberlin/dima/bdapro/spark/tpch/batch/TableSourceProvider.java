@@ -11,26 +11,113 @@ public class TableSourceProvider {
 
 	public static SparkSession loadData(final SparkSession spark, final String sf) {
 		StructField[] lineitem = new StructField[] {
-				DataTypes.createStructField("orderkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("partkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("suppkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("linenumber", DataTypes.IntegerType, false),
-				DataTypes.createStructField("quantity", DataTypes.DoubleType, false),
-				DataTypes.createStructField("extendedprice", DataTypes.DoubleType, false),
-				DataTypes.createStructField("discount", DataTypes.DoubleType, false),
-				DataTypes.createStructField("tax", DataTypes.DoubleType, false),
-				DataTypes.createStructField("returnflag", DataTypes.StringType, false),
-				DataTypes.createStructField("linestatus", DataTypes.StringType, false),
-				DataTypes.createStructField("shipdate", DataTypes.StringType, false),
-				DataTypes.createStructField("commitdate", DataTypes.StringType, false),
-				DataTypes.createStructField("receiptdate", DataTypes.StringType, false),
-				DataTypes.createStructField("shipinstruct", DataTypes.StringType, false),
-				DataTypes.createStructField("shipmode", DataTypes.StringType, false),
-				DataTypes.createStructField("comment", DataTypes.StringType, false) };
+				DataTypes.createStructField("l_orderkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("l_partkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("l_suppkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("l_linenumber", DataTypes.IntegerType, false),
+				DataTypes.createStructField("l_quantity", DataTypes.DoubleType, false),
+				DataTypes.createStructField("l_extendedprice", DataTypes.DoubleType, false),
+				DataTypes.createStructField("l_discount", DataTypes.DoubleType, false),
+				DataTypes.createStructField("l_tax", DataTypes.DoubleType, false),
+				DataTypes.createStructField("l_returnflag", DataTypes.StringType, false),
+				DataTypes.createStructField("l_linestatus", DataTypes.StringType, false),
+				DataTypes.createStructField("l_shipdate", DataTypes.StringType, false),
+				DataTypes.createStructField("l_commitdate", DataTypes.StringType, false),
+				DataTypes.createStructField("l_receiptdate", DataTypes.StringType, false),
+				DataTypes.createStructField("l_shipinstruct", DataTypes.StringType, false),
+				DataTypes.createStructField("l_shipmode", DataTypes.StringType, false),
+				DataTypes.createStructField("l_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(lineitem))
 		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.LINEITEM)
 		.createOrReplaceTempView("lineitem");
+
+		StructField[] supplier = new StructField[] {
+				DataTypes.createStructField("s_suppkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("s_name", DataTypes.StringType, false),
+				DataTypes.createStructField("s_address", DataTypes.StringType, false),
+				DataTypes.createStructField("s_nationkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("s_phone", DataTypes.StringType, false),
+				DataTypes.createStructField("s_acctbal", DataTypes.DoubleType, false),
+				DataTypes.createStructField("s_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(supplier))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.SUPPLIER)
+		.createOrReplaceTempView("supplier");
+
+		StructField[] part = new StructField[] {
+				DataTypes.createStructField("p_partkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("p_name", DataTypes.StringType, false),
+				DataTypes.createStructField("p_mfgr", DataTypes.StringType, false),
+				DataTypes.createStructField("p_brand", DataTypes.StringType, false),
+				DataTypes.createStructField("p_type", DataTypes.StringType, false),
+				DataTypes.createStructField("p_size", DataTypes.IntegerType, false),
+				DataTypes.createStructField("p_container", DataTypes.StringType, false),
+				DataTypes.createStructField("p_retailprice", DataTypes.DoubleType, false),
+				DataTypes.createStructField("p_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(part))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.PART)
+		.createOrReplaceTempView("part");
+
+		StructField[] partsupp = new StructField[] {
+				DataTypes.createStructField("ps_partkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("ps_suppkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("ps_availqty", DataTypes.IntegerType, false),
+				DataTypes.createStructField("ps_supplycost", DataTypes.DoubleType, false),
+				DataTypes.createStructField("ps_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(partsupp))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.PARTSUPP)
+		.createOrReplaceTempView("partsupp");
+
+		StructField[] customer = new StructField[] {
+				DataTypes.createStructField("c_custkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("c_name", DataTypes.StringType, false),
+				DataTypes.createStructField("c_address", DataTypes.StringType, false),
+				DataTypes.createStructField("c_nationkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("c_phone", DataTypes.StringType, false),
+				DataTypes.createStructField("c_acctbal", DataTypes.DoubleType, false),
+				DataTypes.createStructField("c_mktsegment", DataTypes.StringType, false),
+				DataTypes.createStructField("c_comment", DataTypes.StringType, false)};
+
+		spark.read().option("delimiter", "|").schema(new StructType(customer))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.CUSTOMER)
+		.createOrReplaceTempView("customer");
+
+		StructField[] nation = new StructField[] {
+				DataTypes.createStructField("n_nationkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("n_name", DataTypes.StringType, false),
+				DataTypes.createStructField("n_regionkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("n_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(nation))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.NATION)
+		.createOrReplaceTempView("nation");
+
+		StructField[] region = new StructField[] {
+				DataTypes.createStructField("r_regionkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("r_name", DataTypes.StringType, false),
+				DataTypes.createStructField("r_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(region))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.REGION)
+		.createOrReplaceTempView("region");
+
+		StructField[] orders = new StructField[] {
+				DataTypes.createStructField("o_orderkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("o_custkey", DataTypes.IntegerType, false),
+				DataTypes.createStructField("o_orderstatus", DataTypes.StringType, false),
+				DataTypes.createStructField("o_totalprice", DataTypes.DoubleType, false),
+				DataTypes.createStructField("o_orderdate", DataTypes.StringType, false),
+				DataTypes.createStructField("o_orderpriority", DataTypes.StringType, false),
+				DataTypes.createStructField("o_clerk", DataTypes.StringType, false),
+				DataTypes.createStructField("o_shipriority", DataTypes.IntegerType, false),
+				DataTypes.createStructField("o_comment", DataTypes.StringType, false) };
+
+		spark.read().option("delimiter", "|").schema(new StructType(orders))
+		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.ORDERS)
+		.createOrReplaceTempView("orders");
 
 		return spark;
 	}

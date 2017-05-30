@@ -23,12 +23,12 @@ public class Query6 extends Query{
 		LocalDate dateRandom = LocalDate.parse("1994-01-01");
 		LocalDate interval = dateRandom.plusYears(1);
 
-		return spark.sql("select sum(extendedprice*discount) as revenue "
+		return spark.sql("select sum(l_extendedprice*l_discount) as revenue "
 				+ "from lineitem "
-				+ "where shipdate >= '" + dateRandom.toString() + "' "
-				+ "and shipdate < '" + interval.toString() + "' "
-				+ "and discount between 0.05 and 0.07 "
-				+ "and quantity < 24").collectAsList();
+				+ "where l_shipdate >= '" + dateRandom.toString() + "' "
+				+ "and l_shipdate < '" + interval.toString() + "' "
+				+ "and l_discount between 0.05 and 0.07 "
+				+ "and l_quantity < 24").collectAsList();
 	}
 
 }

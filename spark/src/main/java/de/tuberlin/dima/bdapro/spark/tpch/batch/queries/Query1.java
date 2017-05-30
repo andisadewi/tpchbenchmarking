@@ -22,20 +22,20 @@ public class Query1 extends Query{
 	public List<Row> execute(final int delta) {
 		String dateThreshold = LocalDate.parse("1998-12-01").minusDays(delta).toString();
 
-		return spark.sql("select returnflag, "
-				+ "linestatus, "
-				+ "sum(quantity) as sum_qty, "
-				+ "sum(extendedprice) as sum_base_price, "
-				+ "sum(extendedprice*(1-discount)) as sum_disc_price, "
-				+ "sum(extendedprice*(1-discount)*(1+tax)) as sum_charge, "
-				+ "avg(quantity) as avg_qty, "
-				+ "avg(extendedprice) as avg_price, "
-				+ "avg(discount) as avg_disc, "
+		return spark.sql("select l_returnflag, "
+				+ "l_linestatus, "
+				+ "sum(l_quantity) as sum_qty, "
+				+ "sum(l_extendedprice) as sum_base_price, "
+				+ "sum(l_extendedprice*(1-l_discount)) as sum_disc_price, "
+				+ "sum(l_extendedprice*(1-l_discount)*(1+l_tax)) as sum_charge, "
+				+ "avg(l_quantity) as avg_qty, "
+				+ "avg(l_extendedprice) as avg_price, "
+				+ "avg(l_discount) as avg_disc, "
 				+ "count(*) as count_order "
 				+ "from lineitem "
-				+ "where shipdate <= '" + dateThreshold + "' "
-				+ "group by returnflag, linestatus "
-				+ "order by returnflag, linestatus").collectAsList();
+				+ "where l_shipdate <= '" + dateThreshold + "' "
+				+ "group by l_returnflag, l_linestatus "
+				+ "order by l_returnflag, l_linestatus").collectAsList();
 
 	}
 
