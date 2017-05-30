@@ -1,4 +1,4 @@
-package de.tuberlin.dima.bdapro.tpch;
+package de.tuberlin.dima.bdapro.flink.tpch.streaming;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -19,18 +19,18 @@ import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.flink.tpch.Utils;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query15;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query16;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query3;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query4;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query5;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query1;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query10;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query15;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query16;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query18;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query2;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query3;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query4;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query5;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query6;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query7;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query8;
 
 public class QueriesTest {
 

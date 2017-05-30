@@ -1,24 +1,20 @@
 package de.tuberlin.dima.bdapro.flink.tpch.batch.queries;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
-import org.apache.flink.api.java.aggregation.Aggregations;
-import org.apache.flink.api.java.io.CsvReader;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple1;
-import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.table.api.Table;
+import org.apache.flink.table.api.java.BatchTableEnvironment;
 
-import de.tuberlin.dima.bdapro.flink.tpch.PathConfig;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils;
 
 public class Query6 extends Query {
 
-	public Query6(final ExecutionEnvironment env, final String sf) {
-		super(env, sf);
+	public Query6(final BatchTableEnvironment env) {
+		super(env);
 	}
 
 	@Override
@@ -27,52 +23,36 @@ public class Query6 extends Query {
 	}
 
 	public List<Tuple1<Double>> execute(final String date, final double discount, final int quantity) {
+		Table lineitem = env.scan("lineitem");
 
-		final LocalDate randDate = LocalDate.parse(date);
-		final double randDiscount = discount;
-		final int randQuantity = quantity;
+		double lowerBoundDiscount = Utils.convertToTwoDecimal(discount - 0.01);
+		double upperBoundDiscount = Utils.convertToTwoDecimal(discount + 0.01); 
+
+		Table result = lineitem.where("shipdate.toDate >= '" + date + "'.toDate ")
+				.where("shipdate.toDate < ('" + date + "'.toDate + 1.year) ")
+				.where("discount >= " + lowerBoundDiscount)
+				.where("discount <= " + upperBoundDiscount)
+				.where("quantity < " + quantity)
+				.select("sum(extendedprice*discount) as revenue");
 
 		try {
-			final DataSet<Tuple4<Double, Double, Double, String>> lineitem = readLineitem();
-			final List<Tuple1<Double>> out = lineitem
-					.filter(new FilterFunction<Tuple4<Double, Double, Double, String>>() {
+			return env.toDataSet(result, TypeInformation.of
+					(new TypeHint<Tuple1<Double>>(){}))
+					.map(new MapFunction<Tuple1<Double>, Tuple1<Double>>() {
 						private static final long serialVersionUID = 1L;
 
 						@Override
-						public boolean filter(final Tuple4<Double, Double, Double, String> value) throws Exception {
-							double lowerBoundDiscount = Utils.convertToTwoDecimal(randDiscount - 0.01);
-							double upperBoundDiscount = Utils.convertToTwoDecimal(randDiscount + 0.01);
-							return (value.f2 >= lowerBoundDiscount && value.f2 <= upperBoundDiscount)
-									&& (value.f0 < randQuantity)
-									&& (LocalDate.parse(value.f3).isEqual(randDate)
-											|| LocalDate.parse(value.f3).isAfter(randDate))
-									&& (LocalDate.parse(value.f3).isBefore(randDate.plusYears(1)));
-						}
-					}).map(new MapFunction<Tuple4<Double, Double, Double, String>, Tuple1<Double>>() {
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public Tuple1<Double> map(final Tuple4<Double, Double, Double, String> value) throws Exception {
-							return new Tuple1<Double>(value.f1 * value.f2);
-						}
-					}).aggregate(Aggregations.SUM, 0).map(new MapFunction<Tuple1<Double>, Tuple1<Double>>() {
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public Tuple1<Double> map(final Tuple1<Double> value) throws Exception {
+						public Tuple1<Double> map(
+								final Tuple1<Double> value)
+										throws Exception {
 							return Utils.keepOnlyTwoDecimals(value);
 						}
 					}).collect();
-			return out;
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+
 	}
 
-	private DataSet<Tuple4<Double, Double, Double, String>> readLineitem() {
-		final CsvReader source = getCSVReader(PathConfig.LINEITEM);
-		return source.fieldDelimiter("|").includeFields("0000111000100000").types(Double.class, Double.class,
-				Double.class, String.class);
-	}
 }
