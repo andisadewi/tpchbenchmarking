@@ -9,6 +9,7 @@ import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
 
 public class QueriesTest {
 
@@ -102,6 +104,23 @@ public class QueriesTest {
 			}
 		}
 		fail("Query8 failed");
+
+	}
+
+	@Test
+	public void Query9() {
+		final Query9 q9 = new Query9(tableEnv);
+		final List<Tuple3<String, Long, Double>> result = q9.execute("green");
+
+		final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>(Nation.ALGERIA.getName(), (long)1998, 31342867.24);
+
+		for (final Tuple3<String, Long, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query9 failed");
 
 	}
 }
