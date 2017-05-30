@@ -119,6 +119,22 @@ public class Utils {
 		return "Brand#" + firstDigit + secondDigit;
 	}
 
+	private static final List<String> COLORS = new ArrayList<>(Arrays.asList(
+			"almond", "antique", "aquamarine", "azure", "beige", "bisque", "black", "blanched", "blue",
+			"blush", "brown", "burlywood", "burnished", "chartreuse", "chiffon", "chocolate", "coral",
+			"cornflower", "cornsilk", "cream", "cyan", "dark", "deep", "dim", "dodger", "drab", "firebrick",
+			"floral", "forest", "frosted", "gainsboro", "ghost", "goldenrod", "green", "grey", "honeydew",
+			"hot", "indian", "ivory", "khaki", "lace", "lavender", "lawn", "lemon", "light", "lime", "linen",
+			"magenta", "maroon", "medium", "metallic", "midnight", "mint", "misty", "moccasin", "navajo",
+			"navy", "olive", "orange", "orchid", "pale", "papaya", "peach", "peru", "pink", "plum", "powder",
+			"puff", "purple", "red", "rose", "rosy", "royal", "saddle", "salmon", "sandy", "seashell", "sienna",
+			"sky", "slate", "smoke", "snow", "spring", "steel", "tan", "thistle", "tomato", "turquoise", "violet",
+			"wheat", "white", "yellow"));
+
+	public static String getRandomColor() {
+		return getRandomElementFromList(COLORS);
+	}
+
 	/**
 	 * Check all double fields in input tuple and keep only two decimal place.
 	 * 

@@ -19,7 +19,7 @@ public class Query9 extends Query {
 
 	@Override
 	public List<Tuple3<String, Long, Double>> execute() {
-		return execute("green");
+		return execute(Utils.getRandomColor());
 	}
 
 	public List<Tuple3<String, Long, Double>> execute(final String color) {

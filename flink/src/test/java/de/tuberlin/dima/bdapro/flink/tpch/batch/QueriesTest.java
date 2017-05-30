@@ -11,12 +11,14 @@ import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.api.java.tuple.Tuple8;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
@@ -121,6 +123,26 @@ public class QueriesTest {
 			}
 		}
 		fail("Query9 failed");
+		// still not working
+	}
+
+	@Test
+	public void Query10() {
+		final Query10 q10 = new Query10(tableEnv);
+		final List<Tuple8<Integer, String, Double, Double, String, String, String, String>> result = q10
+				.execute("1993-10-01");
+
+		final Tuple8<Integer, String, Double, Double, String, String, String, String> expected = new Tuple8<Integer, String, Double, Double, String, String, String, String>(
+				57040, "Customer#000057040", 734235.25, 632.87, Nation.JAPAN.getName(), "Eioyzjf4pp", "22-895-641-3466",
+				"sits. slyly regular requests sleep alongside of the regular inst");
+
+		for (final Tuple8<Integer, String, Double, Double, String, String, String, String> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query10 failed");
 
 	}
 }
