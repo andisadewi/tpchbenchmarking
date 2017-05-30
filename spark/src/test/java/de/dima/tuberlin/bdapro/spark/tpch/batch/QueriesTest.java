@@ -15,6 +15,7 @@ import de.tuberlin.dima.bdapro.spark.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query1;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query10;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query11;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query8;
@@ -134,7 +135,6 @@ public class QueriesTest {
 		final List<Row> result = q10.execute("1993-10-01");
 
 		for (final Row elem : result) {
-			//			System.out.println(elem.toString());
 			if (elem.getInt(0) == 57040 && 
 					elem.getString(1).equals("Customer#000057040") &&
 					Utils.convertToTwoDecimal(elem.getDouble(2)) == 734235.25 && 
@@ -148,6 +148,22 @@ public class QueriesTest {
 			}
 		}
 		fail("Query10 failed");
+
+	}
+
+	@Test
+	public void Query11() {
+		final Query11 q11 = new Query11(spark, sf);
+		final List<Row> result = q11.execute(Nation.GERMANY.getName(), 0.0001);
+
+		for (final Row elem : result) {
+			if (elem.getInt(0) == 129760 && 
+					Utils.convertToTwoDecimal(elem.getDouble(1)) == 17538456.86) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query11 failed");
 
 	}
 
