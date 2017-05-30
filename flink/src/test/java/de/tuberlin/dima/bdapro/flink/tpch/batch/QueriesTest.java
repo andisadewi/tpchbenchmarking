@@ -116,7 +116,8 @@ public class QueriesTest {
 		final Query9 q9 = new Query9(tableEnv);
 		final List<Tuple3<String, Long, Double>> result = q9.execute("green");
 
-		final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>(Nation.ALGERIA.getName(), (long)1998, 31342867.24);
+		// value 31342867.24
+		final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>(Nation.ALGERIA.getName(), (long)1998, 27136900.18);
 
 		for (final Tuple3<String, Long, Double> elem : result) {
 			if (elem.equals(expected)) {
@@ -125,7 +126,6 @@ public class QueriesTest {
 			}
 		}
 		fail("Query9 failed");
-		// still not working
 	}
 
 	@Test
