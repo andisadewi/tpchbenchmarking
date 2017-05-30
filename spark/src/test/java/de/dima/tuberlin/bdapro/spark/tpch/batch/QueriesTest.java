@@ -13,6 +13,7 @@ import org.junit.Test;
 import de.tuberlin.dima.bdapro.spark.tpch.Utils;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query1;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
 
 public class QueriesTest {
 
@@ -51,6 +52,21 @@ public class QueriesTest {
 			}
 		}
 		fail("Query1 failed");
+
+	}
+
+	@Test
+	public void Query6() {
+		final Query6 q6 = new Query6(spark);
+		final List<Row> result = q6.execute("1994-01-01", 0.06, 24);
+
+		for (final Row elem : result) {
+			if (Utils.convertToTwoDecimal(elem.getDouble(0)) == 123141078.23) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query6 failed");
 
 	}
 
