@@ -16,6 +16,7 @@ import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
@@ -35,7 +36,7 @@ public class QueriesTest {
 	public void setUp() throws Exception {
 		if(!loadedData){
 			ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-			tableEnv = TableSourceProvider.loadData(env, sf);
+			tableEnv = TableSourceProvider.loadDataBatch(env, sf);
 			loadedData = true;
 		}	
 	}

@@ -1,17 +1,21 @@
 package de.tuberlin.dima.bdapro.flink.tpch.streaming;
 
-import org.apache.flink.api.java.ExecutionEnvironment;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.api.java.StreamTableEnvironment;
 
-import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query6;
+import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query1;
 
 public class BenchmarkingJob {
 
 	public static void main(final String[] args) {
-		final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+		String sf = "1.0";
+		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+		StreamTableEnvironment tableEnv = TableSourceProvider.loadDataStream(env, sf);
 
 		long start = System.currentTimeMillis();
 		System.out.println("start: " + start);
-		final Query6 q13 = new Query6(env, "1.0");
+		final Query1 q13 = new Query1(tableEnv, sf);
 		q13.execute();
 		long end = System.currentTimeMillis();
 		System.out.println("end: " + end);
