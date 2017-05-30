@@ -1,60 +1,28 @@
 package de.tuberlin.dima.bdapro.spark.tpch.batch.queries;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.StructField;
-import org.apache.spark.sql.types.StructType;
 
-import de.tuberlin.dima.bdapro.spark.tpch.PathConfig;
+import de.tuberlin.dima.bdapro.spark.tpch.Utils;
 
-public class Query1 {
+public class Query1 extends Query{
 
-	public static void main(final String[] args) {
-		new Query1();
+	public Query1(final SparkSession spark) {
+		super(spark);
 	}
 
-	public Query1() {
-		//		SparkConf conf = new SparkConf().setAppName("TPCH").setMaster("local"); // TODO remove local later		
+	@Override
+	public List<Row> execute() {
+		return execute(Utils.getRandomInt(60, 120));
+	}
 
-		SparkSession spark = SparkSession
-				.builder()
-				.appName("TPCH")
-				.master("local")
-				.getOrCreate();
+	public List<Row> execute(final int delta) {
+		String dateThreshold = LocalDate.parse("1998-12-01").minusDays(delta).toString();
 
-		StructField[] schemas = new StructField[]{
-				DataTypes.createStructField("orderkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("partkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("suppkey", DataTypes.IntegerType, false),
-				DataTypes.createStructField("linenumber", DataTypes.IntegerType, false),
-				DataTypes.createStructField("quantity", DataTypes.DoubleType, false),
-				DataTypes.createStructField("extendedprice", DataTypes.DoubleType, false),
-				DataTypes.createStructField("discount", DataTypes.DoubleType, false),
-				DataTypes.createStructField("tax", DataTypes.DoubleType, false),
-				DataTypes.createStructField("returnflag", DataTypes.StringType, false),
-				DataTypes.createStructField("linestatus", DataTypes.StringType, false),
-				DataTypes.createStructField("shipdate", DataTypes.StringType, false),
-				DataTypes.createStructField("commitdate", DataTypes.StringType, false),
-				DataTypes.createStructField("receiptdate", DataTypes.StringType, false),
-				DataTypes.createStructField("shipinstruct", DataTypes.StringType, false),
-				DataTypes.createStructField("shipmode", DataTypes.StringType, false),
-				DataTypes.createStructField("comment", DataTypes.StringType, false)			
-		};
-
-		StructType schema = new StructType(schemas);
-		Dataset<Row> df = spark.read()
-				.option("delimiter", "|")
-				.schema(schema)
-				.csv(PathConfig.BASE_DIR + "1.0/" + PathConfig.LINEITEM);
-		df.createOrReplaceTempView("lineitem");
-
-		String dateThreshold = LocalDate.parse("1998-12-01").minusDays(90).toString();
-
-		Dataset<Row> res = spark.sql("select returnflag, "
+		return spark.sql("select returnflag, "
 				+ "linestatus, "
 				+ "sum(quantity) as sum_qty, "
 				+ "sum(extendedprice) as sum_base_price, "
@@ -67,9 +35,8 @@ public class Query1 {
 				+ "from lineitem "
 				+ "where shipdate <= '" + dateThreshold + "' "
 				+ "group by returnflag, linestatus "
-				+ "order by returnflag, linestatus");
-		//		res.show();
-		spark.close();
+				+ "order by returnflag, linestatus").collectAsList();
+
 	}
 
 }

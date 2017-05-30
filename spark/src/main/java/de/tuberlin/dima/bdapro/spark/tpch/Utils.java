@@ -86,6 +86,10 @@ public class Utils {
 		return getRandomElementFromList(TYPE_SYL1) + " " + getRandomElementFromList(TYPE_SYL2) + " " + getRandomElementFromList(TYPE_SYL3);
 	}
 
+	public static String getRandomType2() {
+		return getRandomElementFromList(TYPE_SYL1) + " " + getRandomElementFromList(TYPE_SYL2);
+	}
+
 	public static String getRandomTypeSyl1() {
 		return getRandomElementFromList(TYPE_SYL1);
 	}
@@ -96,6 +100,37 @@ public class Utils {
 
 	public static String getRandomTypeSyl3() {
 		return getRandomElementFromList(TYPE_SYL3);
+	}
+
+	private static final List<String> CONTAINERS_SYL1 = new ArrayList<>(Arrays.asList("SM", "LG", "MED", "JUMBO", "WRAP"));
+
+	private static final List<String> CONTAINERS_SYL2 = new ArrayList<>(Arrays.asList("CASE", "BOX", "BAG", "JAR", "PKG", "PACK", "CAN", "DRUM"));
+
+	public static String getRandomContainer() {
+		return getRandomElementFromList(CONTAINERS_SYL1) + " " + getRandomElementFromList(CONTAINERS_SYL2);
+	}
+
+	public static String getRandomBrand() {
+		Random rand = new Random();
+		String firstDigit = String.valueOf(rand.nextInt(6)+1);
+		String secondDigit = String.valueOf(rand.nextInt(6)+1);
+		return "Brand#" + firstDigit + secondDigit;
+	}
+
+	private static final List<String> COLORS = new ArrayList<>(Arrays.asList(
+			"almond", "antique", "aquamarine", "azure", "beige", "bisque", "black", "blanched", "blue",
+			"blush", "brown", "burlywood", "burnished", "chartreuse", "chiffon", "chocolate", "coral",
+			"cornflower", "cornsilk", "cream", "cyan", "dark", "deep", "dim", "dodger", "drab", "firebrick",
+			"floral", "forest", "frosted", "gainsboro", "ghost", "goldenrod", "green", "grey", "honeydew",
+			"hot", "indian", "ivory", "khaki", "lace", "lavender", "lawn", "lemon", "light", "lime", "linen",
+			"magenta", "maroon", "medium", "metallic", "midnight", "mint", "misty", "moccasin", "navajo",
+			"navy", "olive", "orange", "orchid", "pale", "papaya", "peach", "peru", "pink", "plum", "powder",
+			"puff", "purple", "red", "rose", "rosy", "royal", "saddle", "salmon", "sandy", "seashell", "sienna",
+			"sky", "slate", "smoke", "snow", "spring", "steel", "tan", "thistle", "tomato", "turquoise", "violet",
+			"wheat", "white", "yellow"));
+
+	public static String getRandomColor() {
+		return getRandomElementFromList(COLORS);
 	}
 
 	public static double convertToTwoDecimal(final double value) {
