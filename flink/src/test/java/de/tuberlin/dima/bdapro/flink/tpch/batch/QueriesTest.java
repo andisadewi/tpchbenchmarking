@@ -208,6 +208,23 @@ public class QueriesTest {
 	}
 	
 	@Test
+	public void Query12() {
+		final Query12 q12 = new Query12(tableEnv);
+		final List<Tuple3<String, Integer, Integer>> result = q12.execute("MAIL", "SHIP", LocalDate.parse("1994-01-01"));
+
+		final Tuple3<String, Integer, Integer> expected = new Tuple3<String, Integer, Integer>("MAIL", 6202, 9324);
+
+		for (final Tuple3<String, Integer, Integer> elem : result) {
+			System.out.println(elem.f0 + " - " + elem.f1 + " - " + elem.f2);
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query11 failed");
+
+	}
+	@Test
 	public void Query15() {
 		final Query15 q15 = new Query15(tableEnv);
 		final List<Tuple5<Integer, String, String, String, Double>> result = q15.execute(LocalDate.parse("1996-01-01"));
@@ -260,6 +277,21 @@ public class QueriesTest {
 			}
 		}
 		fail("Query19 failed");
+	}
+	
+	@Test
+	public void Query20() {
+		final Query20 q20 = new Query20(tableEnv);
+		final List<Tuple2<String, String>> result = q20.execute("forest", LocalDate.parse("1994-01-01"), "CANADA");
 
+		final Tuple2<String, String> expected = new Tuple2<String, String>("Supplier#000000020", "iybAE,RmTymrZVYaFZva2SH,j");
+
+		for (final Tuple2<String, String> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query11 failed");
 	}
 }
