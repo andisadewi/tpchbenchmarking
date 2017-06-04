@@ -221,7 +221,7 @@ public class QueriesTest {
 				return;
 			}
 		}
-		fail("Query11 failed");
+		fail("Query12 failed");
 
 	}
 	@Test
@@ -292,6 +292,6 @@ public class QueriesTest {
 				return;
 			}
 		}
-		fail("Query11 failed");
+		fail("Query20 failed");
 	}
 }
