@@ -5,7 +5,7 @@ import org.apache.flink.table.api.java.BatchTableEnvironment;
 
 import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
 
 public class BenchmarkingJob {
 
@@ -15,7 +15,7 @@ public class BenchmarkingJob {
 		BatchTableEnvironment tableEnv = TableSourceProvider.loadDataBatch(env, sf);
 		long start = System.currentTimeMillis();
 		System.out.println("start: " + start);
-		final Query q13 = new Query9(tableEnv);
+		final Query q13 = new Query2(tableEnv);
 		q13.execute();
 		long end = System.currentTimeMillis();
 		System.out.println("end: " + end);
