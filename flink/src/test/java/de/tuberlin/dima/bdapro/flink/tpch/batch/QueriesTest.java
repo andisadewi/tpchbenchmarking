@@ -3,6 +3,7 @@ package de.tuberlin.dima.bdapro.flink.tpch.batch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.api.java.tuple.Tuple4;
 import org.apache.flink.api.java.tuple.Tuple5;
+import org.apache.flink.api.java.tuple.Tuple6;
 import org.apache.flink.api.java.tuple.Tuple8;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 import org.junit.Before;
@@ -221,6 +223,43 @@ public class QueriesTest {
             }
         }
         fail("Query15 failed");
-
     }
+	
+	@Test
+	public void Query18() {
+		final Query18 q18 = new Query18(tableEnv);
+		final List<Tuple6<String, Integer, Integer, String, Double, Double>> result = q18.execute(300);
+		final Tuple6<String, Integer, Integer, String, Double, Double> expected =
+				new Tuple6<String, Integer, Integer, String, Double, Double>
+				("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
+
+		for (final Tuple6<String, Integer, Integer, String, Double, Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query18 failed");
+	}
+	
+	@Test
+	public void Query19() {
+		final Query19 q19 = new Query19(tableEnv);
+		final List<Tuple1<Double>> result = q19.execute("Brand#12", "Brand#23", "Brand#34", 1, 10, 20);
+
+		final Tuple1<Double> expected = new Tuple1<Double>(3083843.06);
+		
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(2);
+		
+		
+		for (final Tuple1<Double> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query19 failed");
+
+	}
 }

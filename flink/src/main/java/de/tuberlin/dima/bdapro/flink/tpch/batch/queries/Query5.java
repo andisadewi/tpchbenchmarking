@@ -11,6 +11,7 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
 
 import de.tuberlin.dima.bdapro.flink.tpch.Utils;
+import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
 
 public class Query5 extends Query {
 
@@ -21,8 +22,9 @@ public class Query5 extends Query {
 
 	@Override
 	public List<Tuple2<String, Double>> execute() {
-		return null;
+		return execute(Nation.getRandomRegion(), LocalDate.parse(Utils.getRandomInt(1993, 1997) + "-01-01"));
 	}
+	
 	public List<Tuple2<String, Double>> execute(String rndRegion, LocalDate rndDate) {
 		
 		String SQLQuery = "SELECT n_name, sum(l_extendedprice * (1 - l_discount)) as revenue "

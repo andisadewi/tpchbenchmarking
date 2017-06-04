@@ -23,8 +23,7 @@ public class Query15 extends Query {
 
 	@Override
 	public List<Tuple5<Integer, String, String, String, Double>> execute() {
-		// TODO Auto-generated method stub
-		return null;
+		return execute(LocalDate.parse(Utils.getRandomInt(1993, 1997) + "-01-01"));
 	}
 	
 	public List<Tuple5<Integer, String, String, String, Double>> execute(final LocalDate rndDate) {
