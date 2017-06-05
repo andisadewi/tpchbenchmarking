@@ -64,7 +64,7 @@ public class BenchmarkingJob {
 		try {
 			FileWriter writer = new FileWriter("FlinkBatchOutput.txt", true);
 			for (long str : results) {
-				writer.write((int) str);
+				writer.write(String.valueOf(str));
 			}
 			writer.close();
 		} catch (IOException e) {
