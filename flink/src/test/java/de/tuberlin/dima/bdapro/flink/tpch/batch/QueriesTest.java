@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
@@ -22,14 +24,6 @@ import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query11;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
 
 public class QueriesTest {
 
@@ -41,7 +35,7 @@ public class QueriesTest {
 	public void setUp() throws Exception {
 		if(!loadedData){
 			ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-			tableEnv = TableSourceProvider.loadDataBatch(env, sf);
+			tableEnv = new TableSourceProvider().loadDataBatch(env, sf);
 			loadedData = true;
 		}	
 	}
@@ -64,7 +58,7 @@ public class QueriesTest {
 		fail("Query1 failed");
 
 	}
-	
+
 	@Test
 	public void Query2() {
 		final Query2 q2 = new Query2(tableEnv);
@@ -83,7 +77,47 @@ public class QueriesTest {
 		fail("Query2 failed");
 
 	}
-	
+
+    @Test
+    public void Query3() {
+        final Query3 q3 = new Query3(tableEnv);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final List<Tuple4<Integer, Double, String, Integer>> result = q3.execute("BUILDING",
+                LocalDate.parse("1995-03-15"), dateTimeFormatter);
+
+        final Tuple4<Integer, Double, String, Integer> expected = new Tuple4<Integer, Double, String, Integer>
+                (2456423, 406181.01, "1995-03-05", 0);
+
+
+        for (final Tuple4<Integer, Double, String, Integer> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query3 failed");
+
+    }
+
+    @Test
+    public void Query4() {
+        final Query4 q4 = new Query4(tableEnv);
+
+        final List<Tuple2<String, Long>> result = q4.execute(LocalDate.parse("1993-07-01"));
+
+        final Tuple2<String, Long> expected = new Tuple2<String, Long>("1-URGENT", 10594L);
+
+
+        for (final Tuple2<String, Long> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query4 failed");
+
+    }
 	@Test
 	public void Query5() {
 		final Query5 q5 = new Query5(tableEnv);
@@ -206,7 +240,7 @@ public class QueriesTest {
 		fail("Query11 failed");
 
 	}
-	
+
 	@Test
 	public void Query12() {
 		final Query12 q12 = new Query12(tableEnv);
@@ -224,6 +258,22 @@ public class QueriesTest {
 		fail("Query12 failed");
 
 	}
+    @Test
+    public void Query13() {
+        final Query13 q13 = new Query13(tableEnv);
+        final List<Tuple2<Long,Long>> result = q13.execute("special", "requests");
+
+        final Tuple2<Long,Long> expected = new Tuple2<Long,Long>(9L,6641L);
+
+        for (final Tuple2<Long,Long> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query13 failed");
+
+    }
 	@Test
 	public void Query15() {
 		final Query15 q15 = new Query15(tableEnv);
@@ -231,24 +281,24 @@ public class QueriesTest {
 
 		final Tuple5<Integer, String, String, String, Double> expected =
 				new Tuple5<Integer, String, String, String, Double>
-				(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
+		(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
 
 		for (final Tuple5<Integer, String, String, String, Double> elem : result) {
-            if (elem.equals(expected)) {
-                assertEquals(expected, elem);
-                return;
-            }
-        }
-        fail("Query15 failed");
-    }
-	
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query15 failed");
+	}
+
 	@Test
 	public void Query18() {
 		final Query18 q18 = new Query18(tableEnv);
 		final List<Tuple6<String, Integer, Integer, String, Double, Double>> result = q18.execute(300);
 		final Tuple6<String, Integer, Integer, String, Double, Double> expected =
 				new Tuple6<String, Integer, Integer, String, Double, Double>
-				("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
+		("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
 
 		for (final Tuple6<String, Integer, Integer, String, Double, Double> elem : result) {
 			if (elem.equals(expected)) {
@@ -258,18 +308,18 @@ public class QueriesTest {
 		}
 		fail("Query18 failed");
 	}
-	
+
 	@Test
 	public void Query19() {
 		final Query19 q19 = new Query19(tableEnv);
 		final List<Tuple1<Double>> result = q19.execute("Brand#12", "Brand#23", "Brand#34", 1, 10, 20);
 
 		final Tuple1<Double> expected = new Tuple1<Double>(3083843.06);
-		
+
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
-		
-		
+
+
 		for (final Tuple1<Double> elem : result) {
 			if (elem.equals(expected)) {
 				assertEquals(expected, elem);
@@ -278,7 +328,7 @@ public class QueriesTest {
 		}
 		fail("Query19 failed");
 	}
-	
+
 	@Test
 	public void Query20() {
 		final Query20 q20 = new Query20(tableEnv);
