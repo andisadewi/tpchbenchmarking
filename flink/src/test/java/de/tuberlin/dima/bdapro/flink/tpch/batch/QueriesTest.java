@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple1;
 import org.apache.flink.api.java.tuple.Tuple10;
@@ -22,20 +24,6 @@ import org.junit.Test;
 
 import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query11;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query12;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query15;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query19;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query20;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query5;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
 
 public class QueriesTest {
 
@@ -90,6 +78,46 @@ public class QueriesTest {
 
 	}
 
+    @Test
+    public void Query3() {
+        final Query3 q3 = new Query3(tableEnv);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        final List<Tuple4<Integer, Double, String, Integer>> result = q3.execute("BUILDING",
+                LocalDate.parse("1995-03-15"), dateTimeFormatter);
+
+        final Tuple4<Integer, Double, String, Integer> expected = new Tuple4<Integer, Double, String, Integer>
+                (2456423, 406181.01, "1995-03-05", 0);
+
+
+        for (final Tuple4<Integer, Double, String, Integer> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query3 failed");
+
+    }
+
+    @Test
+    public void Query4() {
+        final Query4 q4 = new Query4(tableEnv);
+
+        final List<Tuple2<String, Long>> result = q4.execute(LocalDate.parse("1993-07-01"));
+
+        final Tuple2<String, Long> expected = new Tuple2<String, Long>("1-URGENT", 10594L);
+
+
+        for (final Tuple2<String, Long> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query4 failed");
+
+    }
 	@Test
 	public void Query5() {
 		final Query5 q5 = new Query5(tableEnv);
@@ -230,6 +258,22 @@ public class QueriesTest {
 		fail("Query12 failed");
 
 	}
+    @Test
+    public void Query13() {
+        final Query13 q13 = new Query13(tableEnv);
+        final List<Tuple2<Long,Long>> result = q13.execute("special", "requests");
+
+        final Tuple2<Long,Long> expected = new Tuple2<Long,Long>(9L,6641L);
+
+        for (final Tuple2<Long,Long> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query13 failed");
+
+    }
 	@Test
 	public void Query15() {
 		final Query15 q15 = new Query15(tableEnv);
