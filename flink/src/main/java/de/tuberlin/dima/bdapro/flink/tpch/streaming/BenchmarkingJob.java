@@ -11,7 +11,9 @@ public class BenchmarkingJob {
 	public static void main(final String[] args) {
 		String sf = "1.0";
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-		StreamTableEnvironment tableEnv = TableSourceProvider.loadDataStream(env, sf);
+		TableSourceProvider provider = new TableSourceProvider();
+		provider.setBaseDir("");
+		StreamTableEnvironment tableEnv = provider.loadDataStream(env, sf);
 
 		long start = System.currentTimeMillis();
 		System.out.println("start: " + start);

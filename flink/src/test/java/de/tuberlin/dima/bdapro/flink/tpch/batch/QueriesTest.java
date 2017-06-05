@@ -23,9 +23,15 @@ import org.junit.Test;
 import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query1;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query11;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query12;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query15;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query19;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query20;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query5;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
@@ -41,7 +47,7 @@ public class QueriesTest {
 	public void setUp() throws Exception {
 		if(!loadedData){
 			ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-			tableEnv = TableSourceProvider.loadDataBatch(env, sf);
+			tableEnv = new TableSourceProvider().loadDataBatch(env, sf);
 			loadedData = true;
 		}	
 	}
@@ -64,7 +70,7 @@ public class QueriesTest {
 		fail("Query1 failed");
 
 	}
-	
+
 	@Test
 	public void Query2() {
 		final Query2 q2 = new Query2(tableEnv);
@@ -83,7 +89,7 @@ public class QueriesTest {
 		fail("Query2 failed");
 
 	}
-	
+
 	@Test
 	public void Query5() {
 		final Query5 q5 = new Query5(tableEnv);
@@ -206,7 +212,7 @@ public class QueriesTest {
 		fail("Query11 failed");
 
 	}
-	
+
 	@Test
 	public void Query12() {
 		final Query12 q12 = new Query12(tableEnv);
@@ -231,24 +237,24 @@ public class QueriesTest {
 
 		final Tuple5<Integer, String, String, String, Double> expected =
 				new Tuple5<Integer, String, String, String, Double>
-				(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
+		(8449, "Supplier#000008449", "Wp34zim9qYFbVctdW", "20-469-856-8873", 1772627.21);
 
 		for (final Tuple5<Integer, String, String, String, Double> elem : result) {
-            if (elem.equals(expected)) {
-                assertEquals(expected, elem);
-                return;
-            }
-        }
-        fail("Query15 failed");
-    }
-	
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query15 failed");
+	}
+
 	@Test
 	public void Query18() {
 		final Query18 q18 = new Query18(tableEnv);
 		final List<Tuple6<String, Integer, Integer, String, Double, Double>> result = q18.execute(300);
 		final Tuple6<String, Integer, Integer, String, Double, Double> expected =
 				new Tuple6<String, Integer, Integer, String, Double, Double>
-				("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
+		("Customer#000128120", 128120, 4722021, "1994-04-07", 544089.09, 323.00);
 
 		for (final Tuple6<String, Integer, Integer, String, Double, Double> elem : result) {
 			if (elem.equals(expected)) {
@@ -258,18 +264,18 @@ public class QueriesTest {
 		}
 		fail("Query18 failed");
 	}
-	
+
 	@Test
 	public void Query19() {
 		final Query19 q19 = new Query19(tableEnv);
 		final List<Tuple1<Double>> result = q19.execute("Brand#12", "Brand#23", "Brand#34", 1, 10, 20);
 
 		final Tuple1<Double> expected = new Tuple1<Double>(3083843.06);
-		
+
 		DecimalFormat df = new DecimalFormat();
 		df.setMaximumFractionDigits(2);
-		
-		
+
+
 		for (final Tuple1<Double> elem : result) {
 			if (elem.equals(expected)) {
 				assertEquals(expected, elem);
@@ -278,7 +284,7 @@ public class QueriesTest {
 		}
 		fail("Query19 failed");
 	}
-	
+
 	@Test
 	public void Query20() {
 		final Query20 q20 = new Query20(tableEnv);

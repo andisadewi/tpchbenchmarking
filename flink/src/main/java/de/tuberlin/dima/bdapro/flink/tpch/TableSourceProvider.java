@@ -11,7 +11,17 @@ import org.apache.flink.table.sources.CsvTableSource;
 
 public class TableSourceProvider {
 
-	public static BatchTableEnvironment loadDataBatch(final ExecutionEnvironment env, final String sf) {
+	private String baseDir = PathConfig.BASE_DIR;
+
+	public String getBaseDir(){
+		return baseDir;
+	}
+
+	public void setBaseDir(final String path){
+		baseDir = path;
+	}
+
+	public BatchTableEnvironment loadDataBatch(final ExecutionEnvironment env, final String sf) {
 		BatchTableEnvironment tableEnv = TableEnvironment.getTableEnvironment(env);
 
 		tableEnv.registerTableSource("lineitem", readLineitem(sf));
@@ -26,7 +36,7 @@ public class TableSourceProvider {
 		return tableEnv;
 	}
 
-	public static StreamTableEnvironment loadDataStream(final StreamExecutionEnvironment env, final String sf) {
+	public StreamTableEnvironment loadDataStream(final StreamExecutionEnvironment env, final String sf) {
 		StreamTableEnvironment tableEnv = TableEnvironment.getTableEnvironment(env);
 
 		// TODO CHANGE TO KAFKA!!!!
@@ -42,9 +52,9 @@ public class TableSourceProvider {
 		return tableEnv;
 	}
 
-	private static CsvTableSource readOrders(final String sf) {
+	private CsvTableSource readOrders(final String sf) {
 		// read orders
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.ORDERS,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.ORDERS,
 				new String[] { "o_orderkey", "o_custkey", "o_orderstatus", "o_totalprice", "o_orderdate",
 						"o_orderpriority", "o_clerk", "o_shipriority", "o_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.INT(), Types.STRING(), Types.DOUBLE(), Types.STRING(),
@@ -52,23 +62,23 @@ public class TableSourceProvider {
 				"|", "\n", null, false, null, false);
 	}
 
-	private static CsvTableSource readRegion(final String sf) {
+	private CsvTableSource readRegion(final String sf) {
 		// read region
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.REGION,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.REGION,
 				new String[] { "r_regionkey", "r_name", "r_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.STRING(), Types.STRING() }, "|", "\n", null, false, null,
 				false);
 	}
 
-	private static CsvTableSource readNation(final String sf) {
+	private CsvTableSource readNation(final String sf) {
 		// read nation
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.NATION,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.NATION,
 				new String[] { "n_nationkey", "n_name", "n_regionkey", "n_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.STRING(), Types.INT(), Types.STRING() }, "|", "\n", null,
 				false, null, false);
 	}
 
-	private static CsvTableSource readCustomer(final String sf) {
+	private CsvTableSource readCustomer(final String sf) {
 		// read customer
 		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.CUSTOMER,
 				new String[] { "c_custkey", "c_name", "c_address", "c_nationkey", "c_phone", "c_acctbal",
@@ -78,17 +88,17 @@ public class TableSourceProvider {
 				"|", "\n", null, false, null, false);
 	}
 
-	private static CsvTableSource readPartsupp(final String sf) {
+	private CsvTableSource readPartsupp(final String sf) {
 		// read partsupp
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.PARTSUPP,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.PARTSUPP,
 				new String[] { "ps_partkey", "ps_suppkey", "ps_availqty", "ps_supplycost", "ps_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.INT(), Types.INT(), Types.DOUBLE(), Types.STRING() }, "|",
 				"\n", null, false, null, false);
 	}
 
-	private static CsvTableSource readPart(final String sf) {
+	private CsvTableSource readPart(final String sf) {
 		// read part
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.PART,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.PART,
 				new String[] { "p_partkey", "p_name", "p_mfgr", "p_brand", "p_type", "p_size", "p_container",
 						"p_retailprice", "p_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.STRING(), Types.STRING(), Types.STRING(), Types.STRING(),
@@ -96,18 +106,18 @@ public class TableSourceProvider {
 				"|", "\n", null, false, null, false);
 	}
 
-	private static CsvTableSource readSupplier(final String sf) {
+	private CsvTableSource readSupplier(final String sf) {
 		// read supplier
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.SUPPLIER,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.SUPPLIER,
 				new String[] { "s_suppkey", "s_name", "s_address", "s_nationkey", "s_phone", "s_acctbal", "s_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.STRING(), Types.STRING(), Types.INT(), Types.STRING(),
 			Types.DOUBLE(), Types.STRING() },
 				"|", "\n", null, false, null, false);
 	}
 
-	private static CsvTableSource readLineitem(final String sf) {
+	private CsvTableSource readLineitem(final String sf) {
 		// read lineitem
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.LINEITEM,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.LINEITEM,
 				new String[] { "l_orderkey", "l_partkey", "l_suppkey", "l_linenumber", "" + "l_quantity",
 						"l_extendedprice", "l_discount", "l_tax", "l_returnflag", "l_linestatus", "l_shipdate",
 						"l_commitdate", "l_receiptdate", "l_shipinstruct", "l_shipmode", "l_comment" },
