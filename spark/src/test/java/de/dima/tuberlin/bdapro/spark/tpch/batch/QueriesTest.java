@@ -3,6 +3,7 @@ package de.dima.tuberlin.bdapro.spark.tpch.batch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.spark.sql.Row;
@@ -20,6 +21,7 @@ import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query8;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query9;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query5;
 
 public class QueriesTest {
 
@@ -59,6 +61,21 @@ public class QueriesTest {
 		}
 		fail("Query1 failed");
 
+	}
+	
+	@Test
+	public void Query5() {
+		final Query5 q5 = new Query5(spark);
+		final List<Row> result = q5.execute("ASIA", LocalDate.parse("1994-01-01"));
+
+		for (final Row elem : result) {
+			if (elem.getString(0).equals("INDONESIA") &&
+					Utils.convertToTwoDecimal(elem.getDouble(1)) == 55502041.17) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query5 failed");
 	}
 
 	@Test
