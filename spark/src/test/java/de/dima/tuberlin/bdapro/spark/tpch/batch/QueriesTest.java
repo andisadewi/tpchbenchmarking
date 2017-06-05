@@ -15,6 +15,7 @@ import de.tuberlin.dima.bdapro.spark.tpch.Utils;
 import de.tuberlin.dima.bdapro.spark.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query1;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query2;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query10;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query11;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
@@ -22,6 +23,13 @@ import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query7;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query8;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query9;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query5;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query12;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query15;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query18;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query19;
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query20;
+
+
 
 public class QueriesTest {
 
@@ -61,6 +69,28 @@ public class QueriesTest {
 		}
 		fail("Query1 failed");
 
+	}
+	
+	@Test
+	public void Query2() {
+		final Query2 q2 = new Query2(spark);
+		final List<Row> result = q2.execute("BRASS", 15, "EUROPE");
+
+		for (final Row elem : result) {
+
+			if (Utils.convertToTwoDecimal(elem.getDouble(0)) == 9938.53 &&
+					elem.getString(1).equals("Supplier#000005359") &&
+					elem.getString(2).equals("UNITED KINGDOM") &&
+					elem.getInt(3) == 185358 &&
+					elem.getString(4).equals("Manufacturer#4") &&
+					elem.getString(5).equals("QKuHYh,vZGiwu2FWEJoLDx04") &&
+					elem.getString(6).equals("33-429-790-6131") &&
+					elem.getString(7).equals("uriously regular requests hag") ) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query1 failed");
 	}
 	
 	@Test
@@ -182,6 +212,88 @@ public class QueriesTest {
 		}
 		fail("Query11 failed");
 
+	}
+	
+	@Test
+	public void Query12() {
+		final Query12 q12 = new Query12(spark);
+		final List<Row> result = q12.execute("MAIL", "SHIP", LocalDate.parse("1994-01-01"));
+
+		for (final Row elem : result) {
+			if (elem.getString(0).equals("MAIL") && 
+					elem.getLong(1) == 6202 &&
+					elem.getLong(2) == 9324) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query12 failed");
+	}
+	
+	@Test
+	public void Query15() {
+		final Query15 q15 = new Query15(spark);
+		final List<Row> result = q15.execute(LocalDate.parse("1996-01-01"));
+
+		for (final Row elem : result) {
+			if (elem.getInt(0) == 8449 &&
+					elem.getString(1).equals("Supplier#000008449") && 
+					elem.getString(2).equals("Wp34zim9qYFbVctdW") && 
+					elem.getString(3).equals("20-469-856-8873") &&  
+					Utils.convertToTwoDecimal(elem.getDouble(4)) == 1772627.21) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query15 failed");
+	}
+	
+	@Test
+	public void Query18() {
+		final Query18 q18 = new Query18(spark);
+		final List<Row> result = q18.execute(300);
+
+		for (final Row elem : result) {
+			if (elem.getString(0).equals("Customer#000128120") && 
+					elem.getInt(1) == 128120 &&
+					elem.getInt(2) == 4722021 &&
+					elem.getString(3).equals("1994-04-07") &&
+					Utils.convertToTwoDecimal(elem.getDouble(4)) == 544089.09 && 
+					Utils.convertToTwoDecimal(elem.getDouble(5)) == 323.00) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query18 failed");
+	}
+	
+	@Test
+	public void Query19() {
+		final Query19 q19 = new Query19(spark);
+		final List<Row> result = q19.execute("Brand#12", "Brand#23", "Brand#34", 1, 10, 20);
+
+		for (final Row elem : result) {
+			if (Utils.convertToTwoDecimal(elem.getDouble(0)) == 3083843.06) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query19 failed");
+	}
+	
+	@Test
+	public void Query20() {
+		final Query20 q20 = new Query20(spark);
+		final List<Row> result = q20.execute("forest", LocalDate.parse("1994-01-01"), "CANADA");
+
+		for (final Row elem : result) {
+			if (elem.getString(0).equals("Supplier#000000020") && 
+					elem.getString(1).equals("iybAE,RmTymrZVYaFZva2SH,j")) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query18 failed");
 	}
 
 }
