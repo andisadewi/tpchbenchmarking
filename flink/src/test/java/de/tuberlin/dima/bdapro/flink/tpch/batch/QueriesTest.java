@@ -344,4 +344,20 @@ public class QueriesTest {
 		}
 		fail("Query20 failed");
 	}
+	
+	@Test
+	public void Query21() {
+		final Query21 q21 = new Query21(tableEnv);
+		final List<Tuple2<String, Long>> result = q21.execute("CANADA");
+
+		final Tuple2<String, Long> expected = new Tuple2<String, Long>("Supplier#000002829", (long) 20);
+
+		for (final Tuple2<String, Long> elem : result) {
+			if (elem.equals(expected)) {
+				assertEquals(expected, elem);
+				return;
+			}
+		}
+		fail("Query21 failed");
+	}
 }

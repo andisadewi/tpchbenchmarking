@@ -28,7 +28,7 @@ import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query15;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query18;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query19;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query20;
-
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query21;
 
 
 public class QueriesTest {
@@ -293,7 +293,23 @@ public class QueriesTest {
 				return;
 			}
 		}
-		fail("Query18 failed");
+		fail("Query20 failed");
+	}
+	
+	@Test
+	public void Query21() {
+		final Query21 q21 = new Query21(spark);
+		final List<Row> result = q21.execute("SAUDI ARABIA");
+
+		for (final Row elem : result) {
+			System.out.println(elem.getString(0) + " -- " + elem.getLong(1));
+			if (elem.getString(0).equals("Supplier#000002829") && 
+					elem.getLong(1) == (long) 20) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query21 failed");
 	}
 
 }
