@@ -431,7 +431,7 @@ public class QueriesTest {
 
         final List<Tuple3<String, Long, Double>> result = q22.execute(countrycode);
 
-        final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>("13", 888L, 6737713.99);
+        final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>("13", 891L, 6752701.57);
 
         for (final Tuple3<String, Long, Double> elem : result) {
             if (elem.equals(expected)) {
