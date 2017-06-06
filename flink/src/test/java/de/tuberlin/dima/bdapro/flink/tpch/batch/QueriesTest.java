@@ -340,6 +340,21 @@ public class QueriesTest {
         fail("Query16 failed");
     }
 
+    @Test
+    public void Query17() {
+        final Query17 q17 = new Query17(tableEnv);
+        final List<Tuple1<Double>> result = q17.execute("Brand#23", "MED BOX");
+        final Tuple1<Double> expected = new Tuple1<Double>(348406.05);
+
+        for (final Tuple1<Double> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query17 failed");
+    }
+
 	@Test
 	public void Query18() {
 		final Query18 q18 = new Query18(tableEnv);
