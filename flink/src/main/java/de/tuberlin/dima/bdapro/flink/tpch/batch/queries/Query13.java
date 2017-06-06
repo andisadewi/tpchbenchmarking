@@ -39,14 +39,7 @@ public class Query13 extends Query {
 
         try {
             return env.toDataSet(res, TypeInformation.of(new TypeHint<Tuple2<Long, Long>>() {
-            })).map(new MapFunction<Tuple2<Long, Long>, Tuple2<Long, Long>>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public Tuple2<Long, Long> map(final Tuple2<Long, Long> value) throws Exception {
-                    return Utils.keepOnlyTwoDecimals(value);
-                }
-            }).collect();
+            })).collect();
         } catch (Exception e) {
             e.printStackTrace();
         }

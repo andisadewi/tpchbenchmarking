@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
@@ -274,6 +276,23 @@ public class QueriesTest {
         fail("Query13 failed");
 
     }
+
+    @Test
+    public void Query14() {
+        final Query14 q14 = new Query14(tableEnv);
+        final List<Tuple1<Double>> result = q14.execute(LocalDate.parse("1995-09-01"));
+
+        final Tuple1<Double> expected = new Tuple1<Double>(16.38);
+
+        for (final Tuple1<Double> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query14 failed");
+
+    }
 	@Test
 	public void Query15() {
 		final Query15 q15 = new Query15(tableEnv);
@@ -291,6 +310,35 @@ public class QueriesTest {
 		}
 		fail("Query15 failed");
 	}
+
+    @Test
+    public void Query16() {
+        final Query16 q16 = new Query16(tableEnv);
+        List<Integer> sizeArray = new ArrayList<Integer>(8);
+        sizeArray.add(0,49);
+        sizeArray.add(1,14);
+        sizeArray.add(2,23);
+        sizeArray.add(3,45);
+        sizeArray.add(4,19);
+        sizeArray.add(5,3);
+        sizeArray.add(6,36);
+        sizeArray.add(7,9);
+        final List<Tuple4<String, String, Integer, Long>> result = q16.execute(
+                "Brand#45", "MEDIUM POLISHED",sizeArray
+                );
+
+        final Tuple4<String, String, Integer, Long> expected =
+                new Tuple4<String, String, Integer, Long>
+                        ("Brand#41", "MEDIUM BRUSHED TIN", 3, 28L);
+
+        for (final Tuple4<String, String, Integer, Long> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query16 failed");
+    }
 
 	@Test
 	public void Query18() {
@@ -360,4 +408,22 @@ public class QueriesTest {
 		}
 		fail("Query21 failed");
 	}
+
+    @Test
+    public void Query22() {
+        final Query22 q22 = new Query22(tableEnv);
+        List<Integer> countrycode = new ArrayList<Integer>(Arrays.asList(13, 31, 23, 29, 30, 18, 17));
+
+        final List<Tuple3<String, Long, Double>> result = q22.execute(countrycode);
+
+        final Tuple3<String, Long, Double> expected = new Tuple3<String, Long, Double>("13", 888L, 6737713.99);
+
+        for (final Tuple3<String, Long, Double> elem : result) {
+            if (elem.equals(expected)) {
+                assertEquals(expected, elem);
+                return;
+            }
+        }
+        fail("Query22 failed");
+    }
 }
