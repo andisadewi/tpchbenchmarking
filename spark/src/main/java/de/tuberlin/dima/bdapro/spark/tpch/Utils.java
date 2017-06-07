@@ -73,11 +73,21 @@ public class Utils {
 
 	private static final List<String> TYPE_SYL1 = new ArrayList<>(Arrays.asList("STANDARD", "SMALL", "MEDIUM", "LARGE", "ECONOMY", "PROMO"));
 
+	private static final List<String> WORD_1 = new ArrayList<>(Arrays.asList("special", "pending", "unusual", "express"));
+
+	private static final List<String> WORD_2 = new ArrayList<>(Arrays.asList("packages", "requests", "accounts", "deposits"));
+
+	private static final List<String> SHIPMODES = new ArrayList<>(Arrays.asList("REG AIR", "AIR", "RAIL", "SHIP", "TRUCK", "MAIL", "FOB"));
+
 	private static String getRandomElementFromList(final List<String> list){
 		Random rand = new Random();
 		return list.get(rand.nextInt(list.size()));
 	}
-
+	
+	public static String getRandomShipmode() {
+		return getRandomElementFromList(SHIPMODES);
+	}
+	
 	public static String getRandomSegment() {
 		return getRandomElementFromList(SEGMENTS);
 	}
@@ -100,6 +110,14 @@ public class Utils {
 
 	public static String getRandomTypeSyl3() {
 		return getRandomElementFromList(TYPE_SYL3);
+	}
+
+	public static String getRandomWord1() {
+		return getRandomElementFromList(WORD_1);
+	}
+
+	public static String getRandomWord2() {
+		return getRandomElementFromList(WORD_2);
 	}
 
 	private static final List<String> CONTAINERS_SYL1 = new ArrayList<>(Arrays.asList("SM", "LG", "MED", "JUMBO", "WRAP"));
