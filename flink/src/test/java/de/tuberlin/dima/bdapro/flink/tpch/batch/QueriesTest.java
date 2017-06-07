@@ -314,15 +314,7 @@ public class QueriesTest {
     @Test
     public void Query16() {
         final Query16 q16 = new Query16(tableEnv);
-        List<Integer> sizeArray = new ArrayList<Integer>(8);
-        sizeArray.add(0,49);
-        sizeArray.add(1,14);
-        sizeArray.add(2,23);
-        sizeArray.add(3,45);
-        sizeArray.add(4,19);
-        sizeArray.add(5,3);
-        sizeArray.add(6,36);
-        sizeArray.add(7,9);
+        List<Integer> sizeArray = new ArrayList<Integer>(Arrays.asList(49, 14, 23, 45, 19, 3, 36, 9));
         final List<Tuple4<String, String, Integer, Long>> result = q16.execute(
                 "Brand#45", "MEDIUM POLISHED",sizeArray
                 );

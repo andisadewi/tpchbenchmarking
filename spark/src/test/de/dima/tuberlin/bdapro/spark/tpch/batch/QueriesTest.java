@@ -4,8 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.*;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.junit.Before;
@@ -14,21 +18,6 @@ import org.junit.Test;
 import de.tuberlin.dima.bdapro.spark.tpch.Utils;
 import de.tuberlin.dima.bdapro.spark.tpch.Utils.Nation;
 import de.tuberlin.dima.bdapro.spark.tpch.batch.TableSourceProvider;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query1;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query2;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query10;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query11;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query6;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query7;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query8;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query9;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query5;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query12;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query15;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query18;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query19;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query20;
-import de.tuberlin.dima.bdapro.spark.tpch.batch.queries.Query21;
 
 
 public class QueriesTest {
@@ -90,9 +79,45 @@ public class QueriesTest {
 				return;
 			}
 		}
-		fail("Query1 failed");
+		fail("Query2 failed");
 	}
-	
+
+	@Test
+	public void Query3() {
+		final Query3 q3 = new Query3(spark);
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		final List<Row> result = q3.execute("BUILDING",
+				LocalDate.parse("1995-03-15"), dateTimeFormatter);
+
+		for (final Row elem : result) {
+
+			if (elem.getInt(0) == 2456423 &&
+                    Utils.convertToTwoDecimal(elem.getDouble(1)) == 406181.01 &&
+					elem.getString(2).equals("1995-03-05") &&
+					elem.getInt(3) == 0) {
+				assertEquals(0, 0);
+				return;
+			}
+		}
+		fail("Query3 failed");
+	}
+
+    @Test
+    public void Query4() {
+        final Query4 q4 = new Query4(spark);
+        final List<Row> result = q4.execute(LocalDate.parse("1993-07-01"));
+
+        for (final Row elem : result) {
+            System.out.println(elem.getString(0) + ": " + elem.getLong(1));
+            if (elem.getString(0).equals("1-URGENT")&&
+                    elem.getLong(1) == 10594) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query4 failed");
+    }
+
 	@Test
 	public void Query5() {
 		final Query5 q5 = new Query5(spark);
@@ -229,6 +254,34 @@ public class QueriesTest {
 		}
 		fail("Query12 failed");
 	}
+
+    @Test
+    public void Query13() {
+        final Query13 q13 = new Query13(spark);
+        final List<Row> result = q13.execute("special", "requests");
+
+        for (final Row elem : result) {
+            if (elem.getLong(0) == 9L &&
+                    elem.getLong(1) == 6641L) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query13 failed");
+    }
+    @Test
+    public void Query14() {
+        final Query14 q14 = new Query14(spark);
+        final List<Row> result = q14.execute(LocalDate.parse("1995-09-01"));
+
+        for (final Row elem : result) {
+            if (Utils.convertToTwoDecimal(elem.getDouble(0)) == 16.38) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query14 failed");
+    }
 	
 	@Test
 	public void Query15() {
@@ -247,6 +300,37 @@ public class QueriesTest {
 		}
 		fail("Query15 failed");
 	}
+    @Test
+    public void Query16() {
+        final Query16 q16 = new Query16(spark);
+        List<Integer> sizeArray = new ArrayList<Integer>(Arrays.asList(49, 14, 23, 45, 19, 3, 36, 9));
+        final List<Row> result = q16.execute("Brand#45", "MEDIUM POLISHED",sizeArray);
+
+        for (final Row elem : result) {
+            if (elem.getString(0).equals("Brand#41") &&
+                    elem.getString(1).equals("MEDIUM BRUSHED TIN") &&
+                    elem.getInt(2) == 3 &&
+                    elem.getLong(3) == 28L) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query16 failed");
+    }
+
+    @Test
+    public void Query17() {
+        final Query17 q17 = new Query17(spark);
+        final List<Row> result = q17.execute("Brand#23", "MED BOX");
+
+        for (final Row elem : result) {
+            if (Utils.convertToTwoDecimal(elem.getDouble(0)) == 348406.05) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query17 failed");
+    }
 	
 	@Test
 	public void Query18() {
@@ -311,5 +395,22 @@ public class QueriesTest {
 		}
 		fail("Query21 failed");
 	}
+
+    @Test
+    public void Query22() {
+        final Query22 q22 = new Query22(spark);
+        List<Integer> countrycode = new ArrayList<Integer>(Arrays.asList(13, 31, 23, 29, 30, 18, 17));
+        final List<Row> result = q22.execute(countrycode);
+
+        for (final Row elem : result) {
+            if (elem.getString(0).equals("13") &&
+                    elem.getLong(1) == (long) 888 &&
+                    Utils.convertToTwoDecimal(elem.getDouble(2)) == 6737713.99) {
+                assertEquals(0, 0);
+                return;
+            }
+        }
+        fail("Query22 failed");
+    }
 
 }
