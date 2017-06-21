@@ -24,8 +24,8 @@ public class Query1 extends Query {
 	public void execute(final int delta) {
 		Table lineitem = env.ingest("lineitem");
 
-		Table result = lineitem.where("shipdate.toDate <= ('1998-12-01'.toDate - " + delta + ".days)")
-				.window(Tumble.over("100000.rows").on("rowtime").as("w"))
+		Table result = lineitem
+				.window(Tumble.over("100000.rows").on("rowtime").as("w"))				
 				.groupBy("w, returnflag, linestatus")
 				.select("returnflag, linestatus, sum(quantity) as sum_qty, "
 						+ "sum(extendedprice) as sum_base_price, "
@@ -35,6 +35,7 @@ public class Query1 extends Query {
 						+ "avg(extendedprice) as avg_price, "
 						+ "avg(discount) as avg_disc, "
 						+ "count(linestatus) as count_order")
+				.where("shipdate.toDate <= ('1998-12-01'.toDate - " + delta + ".days)")
 				.orderBy("returnflag, linestatus");
 
 		try {
