@@ -202,6 +202,8 @@ public class BenchmarkingJob {
 //		results.add(" Query22 execution time in miliseconds: " + (end - start) + "\r\n");
 
 		////////////////////////WRITE OUTPUT TO FILE ///////////////////////////////
+		
+		// TODO write the output in distributed fashion!!!
 		try {
 			FileWriter writer = new FileWriter("FlinkBatchOutput.txt", true);
 			for (String str : results) {
