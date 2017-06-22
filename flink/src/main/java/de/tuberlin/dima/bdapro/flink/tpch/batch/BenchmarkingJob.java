@@ -11,7 +11,21 @@ import org.apache.flink.table.api.java.BatchTableEnvironment;
 
 import de.tuberlin.dima.bdapro.flink.tpch.TableSourceProvider;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.*;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query10;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query11;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query12;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query13;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query14;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query15;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query19;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query20;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query3;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query4;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query5;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query7;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query8;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
 
 /**
  * How to use: ./bin/flink run benchmarkingJob.jar <path//to//the//testDB>
@@ -188,6 +202,8 @@ public class BenchmarkingJob {
 		results.add(" Query22 execution time in miliseconds: " + (end - start) + "\r\n");
 
 		////////////////////////WRITE OUTPUT TO FILE ///////////////////////////////
+		
+		// TODO write the output in distributed fashion!!!
 		try {
 			FileWriter writer = new FileWriter("FlinkBatchOutput.txt", true);
 			for (String str : results) {
