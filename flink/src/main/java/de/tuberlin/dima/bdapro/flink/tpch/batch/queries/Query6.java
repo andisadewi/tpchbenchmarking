@@ -28,12 +28,12 @@ public class Query6 extends Query {
 		double lowerBoundDiscount = Utils.convertToTwoDecimal(discount - 0.01);
 		double upperBoundDiscount = Utils.convertToTwoDecimal(discount + 0.01); 
 
-		Table result = lineitem.where("shipdate.toDate >= '" + date + "'.toDate ")
-				.where("shipdate.toDate < ('" + date + "'.toDate + 1.year) ")
-				.where("discount >= " + lowerBoundDiscount)
-				.where("discount <= " + upperBoundDiscount)
-				.where("quantity < " + quantity)
-				.select("sum(extendedprice*discount) as revenue");
+		Table result = lineitem.where("l_shipdate.toDate >= '" + date + "'.toDate ")
+				.where("l_shipdate.toDate < ('" + date + "'.toDate + 1.year) ")
+				.where("l_discount >= " + lowerBoundDiscount)
+				.where("l_discount <= " + upperBoundDiscount)
+				.where("l_quantity < " + quantity)
+				.select("sum(l_extendedprice*l_discount) as revenue");
 
 		try {
 			return env.toDataSet(result, TypeInformation.of
