@@ -62,10 +62,10 @@ public class BenchmarkingJob {
 		//results.add(" Query1 execution time in miliseconds: " + (end - start) + "\r\n");
 		
 		start = System.currentTimeMillis();
-		//final Query q2 = new Query2(tableEnv);
-		//q2.execute();
+		final Query q2 = new Query2(tableEnv);
+		q2.execute();
 		end = System.currentTimeMillis();
-		//results.add(" Query2 execution time in miliseconds: " + (end - start) + "\r\n");
+		results.add(" Query2 execution time in miliseconds: " + (end - start) + "\r\n");
 		
 		start = System.currentTimeMillis();
 		final Query q3 = new Query3(tableEnv);
@@ -90,7 +90,7 @@ public class BenchmarkingJob {
 //		q6.execute();
 //		end = System.currentTimeMillis();
 //		results.add(" Query6 execution time in miliseconds: " + (end - start) + "\r\n");
-		
+//		
 		 start = System.currentTimeMillis();
 		final Query q7 = new Query7(tableEnv);
 		q7.execute();
@@ -145,17 +145,17 @@ public class BenchmarkingJob {
 		end = System.currentTimeMillis();
 		results.add(" Query15 execution time in miliseconds: " + (end - start) + "\r\n");
 		
-//		start = System.currentTimeMillis();
-//		final Query q16 = new Query16(tableEnv);
-//		q16.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query16 execution time in miliseconds: " + (end - start) + "\r\n");
+////		start = System.currentTimeMillis();
+////		final Query q16 = new Query16(tableEnv);
+////		q16.execute();
+////		end = System.currentTimeMillis();
+////		results.add(" Query16 execution time in miliseconds: " + (end - start) + "\r\n");
 		
-//		start = System.currentTimeMillis();
-//		final Query q17 = new Query17(tableEnv);
-//		q17.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query17 execution time in miliseconds: " + (end - start) + "\r\n");
+		start = System.currentTimeMillis();
+		final Query q17 = new Query17(tableEnv);
+		q17.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query17 execution time in miliseconds: " + (end - start) + "\r\n");
 		
 		start = System.currentTimeMillis();
 		final Query q18 = new Query18(tableEnv);
@@ -175,17 +175,17 @@ public class BenchmarkingJob {
 		end = System.currentTimeMillis();
 		results.add(" Query20 execution time in miliseconds: " + (end - start) + "\r\n");
 		
-//		start = System.currentTimeMillis();
-//		final Query q21 = new Query21(tableEnv);
-//		q21.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query21 execution time in miliseconds: " + (end - start) + "\r\n");
+		start = System.currentTimeMillis();
+		final Query q21 = new Query21(tableEnv);
+		q21.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query21 execution time in miliseconds: " + (end - start) + "\r\n");
 		
-//		 start = System.currentTimeMillis();
-//		final Query q22 = new Query22(tableEnv);
-//		q22.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query22 execution time in miliseconds: " + (end - start) + "\r\n");
+		 start = System.currentTimeMillis();
+		final Query q22 = new Query22(tableEnv);
+		q22.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query22 execution time in miliseconds: " + (end - start) + "\r\n");
 
 		////////////////////////WRITE OUTPUT TO FILE ///////////////////////////////
 		try {
