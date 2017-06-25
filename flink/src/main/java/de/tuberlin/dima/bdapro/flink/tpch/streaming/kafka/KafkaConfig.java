@@ -3,7 +3,7 @@ package de.tuberlin.dima.bdapro.flink.tpch.streaming.kafka;
 public class KafkaConfig {
 
 	public static final String TOPIC_NAME = "topic";
-	public static final String TOPIC_NAME_VALUE = "tpch";
+	public static final String TOPIC_NAME_VALUE = "nation";
 	public static final String BOOTSTRAP_SERVER = "bootstrap.servers";
 	public static final String BOOTSTRAP_SERVER_VALUE = "localhost:9092";
 	public static final String ZOOKEEPER = "zookeeper.connect";
@@ -24,5 +24,8 @@ public class KafkaConfig {
 	public static final String KEY_SERIALIZER_VALUE = "org.apache.kafka.common.serialization.StringSerializer";
 	public static final String VALUE_SERIALIZER = "value.serializer";
 	public static final String VALUE_SERIALIZER_VALUE = "org.apache.kafka.common.serialization.StringSerializer";
-
+	public static final String KEY_DESERIALIZER = "key.deserializer";
+	public static final String KEY_DESERIALIZER_VALUE = "org.apache.kafka.common.serialization.StringDeserializer";
+	public static final String VALUE_DESERIALIZER = "value.deserializer";
+	public static final String VALUE_DESERIALIZER_VALUE = "org.apache.kafka.common.serialization.StringDeserializer";
 }
