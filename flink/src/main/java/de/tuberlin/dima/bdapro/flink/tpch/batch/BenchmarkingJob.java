@@ -23,7 +23,6 @@ import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query19;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query20;
-import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query21;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query22;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query3;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query4;
@@ -35,8 +34,8 @@ import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query9;
 
 /**
  * How to use: ./bin/flink run benchmarkingJob.jar <path//to//the//testDB>
- * <//scaleFactor//> example: ./bin/flink run benchmarkingJob.jar
- * /home/ubuntu/tpch/dbgen/testdata 1.0
+ * <//scaleFactor//> <//parallelism//> example: ./bin/flink run benchmarkingJob.jar
+ * /home/ubuntu/tpch/dbgen/testdata 1.0 150
  *
  */
 
@@ -44,7 +43,7 @@ public class BenchmarkingJob {
 
 	public static void main(final String[] args) {
 		//////////////////////// ARGUMENT PARSING ///////////////////////////////
-		if (args.length <= 0 || args.length > 2) {
+		if (args.length <= 0 || args.length > 3) {
 			throw new IllegalArgumentException(
 					"Please input the path to the directory where the test databases are located.");
 		}
@@ -66,9 +65,21 @@ public class BenchmarkingJob {
 		} catch (Exception ex) {
 			throw new IllegalArgumentException("Please give a valid scale factor.");
 		}
-
+		
+		int parallelism = -1;
+		if(args.length > 2){			
+			try {
+				parallelism = Integer.parseInt(args[2]);
+			} catch (Exception ex) {
+				throw new IllegalArgumentException("Please give a valid parallelism factor.");
+			}
+		}
+		
 		////////////////////////QUERIES ///////////////////////////////
 		final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
+		if(parallelism != -1){
+			env.setParallelism(parallelism);
+		}		
 		TableSourceProvider provider = new TableSourceProvider();
 		provider.setBaseDir(path);
 		BatchTableEnvironment tableEnv = provider.loadDataBatch(env, sf);
