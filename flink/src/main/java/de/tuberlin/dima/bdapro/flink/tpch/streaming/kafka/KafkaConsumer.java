@@ -10,42 +10,56 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 public class KafkaConsumer {
 
-private Properties props;
-	
+	private Properties props;
+
 	public KafkaConsumer() {
 		setProps();
 	}
-	
-	public void startReceiving(){
-	    StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-	    DataStream<String> stream = env.addSource(new FlinkKafkaConsumer010<>(
-	     "nation", new SimpleStringSchema(), props) );
+	public void startReceiving() {
+		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-	    stream.map(new MapFunction<String, String>() {
-	      private static final long serialVersionUID = -6867736771747690202L;
+		DataStream<String> stream = env
+				.addSource(new FlinkKafkaConsumer010<>("nation", new SimpleStringSchema(), props));
 
-	      @Override
-	      public String map(final String value) throws Exception {
-	        return "Stream Value: " + value;
-	      }
-	    }).writeAsText("output.txt");
+		stream.map(new MapFunction<String, String>() {
+			private static final long serialVersionUID = -6867736771747690202L;
 
-	    try {
+			@Override
+			public String map(final String value) throws Exception {
+				return "Stream Value: " + value;
+			}
+		}).writeAsText("output.txt");
+
+		DataStream<String> stream2 = env
+				.addSource(new FlinkKafkaConsumer010<>("customer", new SimpleStringSchema(), props));
+
+		stream2.map(new MapFunction<String, String>() {
+			private static final long serialVersionUID = -6867736771747690202L;
+
+			@Override
+			public String map(final String value) throws Exception {
+				return "Stream Value: " + value;
+			}
+		}).writeAsText("output2.txt");
+
+		try {
 			env.execute();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void setProps() {
 		props = new Properties();
-		props.put(KafkaConfig.TOPIC_NAME, KafkaConfig.TOPIC_NAME_VALUE);   
-		props.put(KafkaConfig.BOOTSTRAP_SERVER, KafkaConfig.BOOTSTRAP_SERVER_VALUE);   
-		props.put(KafkaConfig.ZOOKEEPER, KafkaConfig.ZOOKEPER_VALUE);  
-		props.put(KafkaConfig.GROUP_ID, KafkaConfig.GROUP_ID_VALUE);  
-//		props.put(KafkaConfig.KEY_DESERIALIZER, KafkaConfig.KEY_DESERIALIZER_VALUE);
-//		props.put(KafkaConfig.VALUE_DESERIALIZER, KafkaConfig.VALUE_DESERIALIZER_VALUE);
+		props.put(KafkaConfig.TOPIC_NAME, KafkaConfig.TOPIC_NAME_VALUE);
+		props.put(KafkaConfig.BOOTSTRAP_SERVER, KafkaConfig.BOOTSTRAP_SERVER_VALUE);
+		props.put(KafkaConfig.ZOOKEEPER, KafkaConfig.ZOOKEPER_VALUE);
+		props.put(KafkaConfig.GROUP_ID, KafkaConfig.GROUP_ID_VALUE);
+		// props.put(KafkaConfig.KEY_DESERIALIZER,
+		// KafkaConfig.KEY_DESERIALIZER_VALUE);
+		// props.put(KafkaConfig.VALUE_DESERIALIZER,
+		// KafkaConfig.VALUE_DESERIALIZER_VALUE);
 	}
 
 }
