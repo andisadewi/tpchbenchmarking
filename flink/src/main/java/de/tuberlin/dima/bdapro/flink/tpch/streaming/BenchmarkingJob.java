@@ -17,7 +17,6 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 
 import de.tuberlin.dima.bdapro.flink.tpch.streaming.kafka.KafkaConfig;
-import de.tuberlin.dima.bdapro.flink.tpch.streaming.queries.Query1;
 
 public class BenchmarkingJob {
 
@@ -94,10 +93,15 @@ public class BenchmarkingJob {
 			}
 		}).keyBy(4,5).reduce(new ReduceFunction<Tuple7<Double,Double,Double,Double,String,String,String>>() {
 			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Tuple7<Double, Double, Double, Double, String, String, String> reduce(
-					Tuple7<Double, Double, Double, Double, String, String, String> value1,
-					Tuple7<Double, Double, Double, Double, String, String, String> value2) throws Exception {
+					final Tuple7<Double, Double, Double, Double, String, String, String> value1,
+					final Tuple7<Double, Double, Double, Double, String, String, String> value2) throws Exception {
 				// TODO Auto-generated method stub
 				return null;
 			}
