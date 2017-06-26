@@ -55,11 +55,11 @@ public class KafkaProducer {
 	public void startSending() {
 		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-		DataStream<String> nation = env.readTextFile(path + PathConfig.NATION);
-		nation.addSink(new FlinkKafkaProducer010<>("nation", new SimpleStringSchema(), props));
-
 		DataStream<String> customer = env.readTextFile(path + PathConfig.CUSTOMER);
 		customer.addSink(new FlinkKafkaProducer010<>("customer", new SimpleStringSchema(), props));
+		
+		DataStream<String> lineitem = env.readTextFile(path + PathConfig.LINEITEM);
+		lineitem.addSink(new FlinkKafkaProducer010<>("lineitem", new SimpleStringSchema(), props));
 		
 		try {
 			env.execute();
