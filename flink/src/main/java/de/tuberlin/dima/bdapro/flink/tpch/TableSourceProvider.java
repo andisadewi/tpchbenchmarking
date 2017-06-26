@@ -80,7 +80,7 @@ public class TableSourceProvider {
 
 	private CsvTableSource readCustomer(final String sf) {
 		// read customer
-		return new CsvTableSource(PathConfig.BASE_DIR + sf + "/" + PathConfig.CUSTOMER,
+		return new CsvTableSource(baseDir + sf + "/" + PathConfig.CUSTOMER,
 				new String[] { "c_custkey", "c_name", "c_address", "c_nationkey", "c_phone", "c_acctbal",
 						"c_mktsegment", "c_comment" },
 				new TypeInformation<?>[] { Types.INT(), Types.STRING(), Types.STRING(), Types.INT(), Types.STRING(),
