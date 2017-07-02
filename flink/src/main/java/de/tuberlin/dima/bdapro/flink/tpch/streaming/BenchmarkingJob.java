@@ -48,7 +48,6 @@ public class BenchmarkingJob {
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
         setProps();
 
-        //MySource lineitem2 = new MySource("lineitem", new SimpleStringSchema(), props);
         FlinkKafkaConsumer010<String> lineitem2 = (FlinkKafkaConsumer010<String>) new FlinkKafkaConsumer010<>("lineitem", new SimpleStringSchema(), props)
              .assignTimestampsAndWatermarks(new IngestionTimeExtractor());
 
