@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
+import de.tuberlin.dima.bdapro.spark.tpch.Utils;
+
 public class Query18 extends Query {
 	
 	public Query18(final SparkSession spark) {
@@ -14,7 +16,7 @@ public class Query18 extends Query {
 	@Override
 	public List<Row> execute() {
 		// TODO Auto-generated method stub
-		return null;
+		return execute(Utils.getRandomInt(312, 315));
 	}
 	
 	public List<Row> execute(int rndQty) {

@@ -59,6 +59,6 @@ public class Query14 extends Query {
     private LocalDate getRandomDate()
     {
         Random rand = new Random();
-        return LocalDate.of(Utils.getRandomInt(1992,1997), Utils.getRandomInt(0,12), 1);
+        return LocalDate.of(Utils.getRandomInt(1992,1997), Utils.getRandomInt(1,12), 1);
     }
 }

@@ -8,8 +8,18 @@ import org.apache.spark.sql.types.StructType;
 import de.tuberlin.dima.bdapro.spark.tpch.PathConfig;
 
 public class TableSourceProvider {
+	
+	private String baseDir = PathConfig.BASE_DIR;
 
-	public static SparkSession loadData(final SparkSession spark, final String sf) {
+	public String getBaseDir(){
+		return baseDir;
+	}
+
+	public void setBaseDir(final String path){
+		baseDir = path;
+	}
+
+	public SparkSession loadData(final SparkSession spark, final String sf) {
 		StructField[] lineitem = new StructField[] {
 				DataTypes.createStructField("l_orderkey", DataTypes.IntegerType, false),
 				DataTypes.createStructField("l_partkey", DataTypes.IntegerType, false),
@@ -29,7 +39,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("l_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(lineitem))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.LINEITEM)
+		.csv(baseDir + sf + "/" + PathConfig.LINEITEM)
 		.createOrReplaceTempView("lineitem");
 
 		StructField[] supplier = new StructField[] {
@@ -42,7 +52,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("s_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(supplier))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.SUPPLIER)
+		.csv(baseDir + sf + "/" + PathConfig.SUPPLIER)
 		.createOrReplaceTempView("supplier");
 
 		StructField[] part = new StructField[] {
@@ -57,7 +67,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("p_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(part))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.PART)
+		.csv(baseDir + sf + "/" + PathConfig.PART)
 		.createOrReplaceTempView("part");
 
 		StructField[] partsupp = new StructField[] {
@@ -68,7 +78,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("ps_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(partsupp))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.PARTSUPP)
+		.csv(baseDir + sf + "/" + PathConfig.PARTSUPP)
 		.createOrReplaceTempView("partsupp");
 
 		StructField[] customer = new StructField[] {
@@ -82,7 +92,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("c_comment", DataTypes.StringType, false)};
 
 		spark.read().option("delimiter", "|").schema(new StructType(customer))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.CUSTOMER)
+		.csv(baseDir + sf + "/" + PathConfig.CUSTOMER)
 		.createOrReplaceTempView("customer");
 
 		StructField[] nation = new StructField[] {
@@ -92,7 +102,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("n_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(nation))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.NATION)
+		.csv(baseDir + sf + "/" + PathConfig.NATION)
 		.createOrReplaceTempView("nation");
 
 		StructField[] region = new StructField[] {
@@ -101,7 +111,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("r_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(region))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.REGION)
+		.csv(baseDir + sf + "/" + PathConfig.REGION)
 		.createOrReplaceTempView("region");
 
 		StructField[] orders = new StructField[] {
@@ -116,7 +126,7 @@ public class TableSourceProvider {
 				DataTypes.createStructField("o_comment", DataTypes.StringType, false) };
 
 		spark.read().option("delimiter", "|").schema(new StructType(orders))
-		.csv(PathConfig.BASE_DIR + sf + "/" + PathConfig.ORDERS)
+		.csv(baseDir + sf + "/" + PathConfig.ORDERS)
 		.createOrReplaceTempView("orders");
 
 		return spark;
