@@ -122,9 +122,9 @@ public class BenchmarkingJob {
                 }).keyBy(4, 5)
                 .timeWindow(Time.seconds(10), Time.seconds(1))
                 .apply(new PricingSummaryReport());
+
         		// TODO after executing the query, calculate latency 
         		// i guess: current time - timestamp of FIRST tuple in a window - window time
-
     }
 
 
