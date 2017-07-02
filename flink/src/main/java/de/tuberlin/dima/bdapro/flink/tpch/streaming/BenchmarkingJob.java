@@ -108,7 +108,7 @@ public class BenchmarkingJob {
 
     private void executeQuery1(
 			final DataStream<Tuple7<Double, Double, Double, Double, String, String, String>> lineitem) {
-        SingleOutputStreamOperator<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> pricingSummary = lineitem
+         lineitem
                 .filter(new FilterFunction<Tuple7<Double, Double, Double, Double, String, String, String>>() {
                     private static final long serialVersionUID = 1L;
 
@@ -120,14 +120,12 @@ public class BenchmarkingJob {
                         return date.isBefore(thresholdDate) || date.isEqual(thresholdDate);
                     }
                 }).keyBy(4, 5)
-                .timeWindow(Time.seconds(10), Time.seconds(1))
-                .apply(new PricingSummaryReport());
+                .timeWindow(Time.seconds(10))
+                .apply(new PricingSummaryReport()).print();
 
         		// TODO after executing the query, calculate latency 
         		// i guess: current time - timestamp of FIRST tuple in a window - window time
     }
-
-
 //    public static class orderPricingReportLineStatus implements ProcessFunction<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>,
 //                    Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> {
 //        private ValueState<PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>>> queueState = null;
