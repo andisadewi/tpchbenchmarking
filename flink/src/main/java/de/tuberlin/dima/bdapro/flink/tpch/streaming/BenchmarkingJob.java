@@ -1,22 +1,37 @@
 package de.tuberlin.dima.bdapro.flink.tpch.streaming;
 
-import java.time.LocalDate;
-import java.util.Properties;
-
+import de.tuberlin.dima.bdapro.flink.tpch.Utils;
+import de.tuberlin.dima.bdapro.flink.tpch.streaming.kafka.KafkaConfig;
 import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple10;
 import org.apache.flink.api.java.tuple.Tuple16;
 import org.apache.flink.api.java.tuple.Tuple7;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.TimerService;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.IngestionTimeExtractor;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
+import org.apache.flink.util.Collector;
 
-import de.tuberlin.dima.bdapro.flink.tpch.streaming.kafka.KafkaConfig;
+import java.time.LocalDate;
+import java.util.PriorityQueue;
+import java.util.Properties;
 
 public class BenchmarkingJob {
 
@@ -28,17 +43,20 @@ public class BenchmarkingJob {
 	}
 
 	private void run() {
-		StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-		StreamTableEnvironment tableEnv = TableEnvironment.getTableEnvironment(env);
-		env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
-		setProps();
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        StreamTableEnvironment tableEnv = TableEnvironment.getTableEnvironment(env);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
+        setProps();
 
-		DataStream<Tuple16<Integer, Integer, Integer, Integer, Double, 
-		Double, Double, Double, String, String, String, 
-		String, String, String, String, String>> lineitem = env
-				.addSource(new FlinkKafkaConsumer010<>("lineitem", new SimpleStringSchema(), props))
-				.rebalance()
-				.map(new MapToLineitem());
+        FlinkKafkaConsumer010<String> lineitem2 = (FlinkKafkaConsumer010<String>) new FlinkKafkaConsumer010<>("lineitem", new SimpleStringSchema(), props)
+             .assignTimestampsAndWatermarks(new IngestionTimeExtractor());
+
+        DataStream<Tuple16<Integer, Integer, Integer, Integer, Double,
+                Double, Double, Double, String, String, String,
+                String, String, String, String, String>> lineitem = env
+                .addSource(lineitem2)
+                .rebalance()
+                .map(new MapToLineitem());
 				
 		executeQuery1(lineitem.project(4,5,6,7,8,9,10));
 //		tableEnv.registerDataStream("lineitem", lineitem, "l_orderkey, l_partkey, l_suppkey, l_linenumber, l_quantity, " +
@@ -78,38 +96,80 @@ public class BenchmarkingJob {
 		
 	}
 
-	private void executeQuery1(
+    private FlinkKafkaConsumer010<String> getLineitem() {
+        return new FlinkKafkaConsumer010<>("lineitem", new SimpleStringSchema(), props);
+    }
+
+    private void executeQuery1(
 			final DataStream<Tuple7<Double, Double, Double, Double, String, String, String>> lineitem) {
-		lineitem
-		.filter(new FilterFunction<Tuple7<Double, Double, Double, Double, String, String, String>>() {
-			private static final long serialVersionUID = 1L;
+        SingleOutputStreamOperator<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> pricingSummary = lineitem
+                .filter(new FilterFunction<Tuple7<Double, Double, Double, Double, String, String, String>>() {
+                    private static final long serialVersionUID = 1L;
 
-			@Override
-			public boolean filter(final Tuple7<Double, Double, Double, Double, String, String, String> arg0)
-					throws Exception {
-				final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(90);
-				LocalDate date = LocalDate.parse(arg0.f6);
-				return date.isBefore(thresholdDate) || date.isEqual(thresholdDate);
-			}
-		}).keyBy(4,5).reduce(new ReduceFunction<Tuple7<Double,Double,Double,Double,String,String,String>>() {
-			
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
+                    @Override
+                    public boolean filter(final Tuple7<Double, Double, Double, Double, String, String, String> arg0)
+                            throws Exception {
+                        final LocalDate thresholdDate = LocalDate.of(1998, 12, 1).minusDays(90);
+                        LocalDate date = LocalDate.parse(arg0.f6);
+                        return date.isBefore(thresholdDate) || date.isEqual(thresholdDate);
+                    }
+                }).keyBy(4, 5)
+                .timeWindow(Time.seconds(10), Time.seconds(1))
+                .apply(new PricingSummaryReport());
 
-			@Override
-			public Tuple7<Double, Double, Double, Double, String, String, String> reduce(
-					final Tuple7<Double, Double, Double, Double, String, String, String> value1,
-					final Tuple7<Double, Double, Double, Double, String, String, String> value2) throws Exception {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-		
-	}
+        pricingSummary.
 
-	private void setProps() {
+    }
+
+
+    public static class orderPricingReportLineStatus implements ProcessFunction<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>,
+                    Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> {
+        private ValueState<PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>>> queueState = null;
+        @Override
+        public void open(Configuration config) {
+
+            ValueStateDescriptor<PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>>> descriptor
+                    = new ValueStateDescriptor<>(
+                    // state name
+                    "sorted-events",
+                    // type information of state
+                    TypeInformation.of(new TypeHint<PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>>>() {
+                    }));
+            queueState = getRuntimeContext().getState(descriptor);
+        }
+
+        @Override
+        public void processElement(Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer> event,
+                                   Context context, Collector<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> out) throws Exception {
+            TimerService timerService = context.timerService();
+
+            if (context.timestamp() > timerService.currentWatermark()) {
+                PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> queue = queueState.value();
+                if (queue == null) {
+                    queue = new PriorityQueue<>(10, new orderByFunction());
+                }
+                queue.add(event);
+                queueState.update(queue);
+                timerService.registerEventTimeTimer(event.timestamp);
+            }
+        }
+
+        @Override
+        public void onTimer(long timestamp, OnTimerContext context, Collector<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> out) throws Exception {
+            PriorityQueue<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> queue = queueState.value();
+            Long watermark = context.timerService().currentWatermark();
+            Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer> head = queue.peek();
+            while (head != null && head.timestamp <= watermark) {
+                out.collect(head);
+                queue.remove(head);
+                head = queue.peek();
+            }
+        }
+
+
+    }
+
+    private void setProps() {
 		props = new Properties();
 		props.put(KafkaConfig.TOPIC_NAME, KafkaConfig.TOPIC_NAME_VALUE);
 		props.put(KafkaConfig.BOOTSTRAP_SERVER, KafkaConfig.BOOTSTRAP_SERVER_VALUE);
@@ -128,7 +188,7 @@ public class BenchmarkingJob {
 		@Override
 		public Tuple16<Integer, Integer, Integer, Integer, Double, Double, Double, Double, String, String, String, String, String, String, String, String> map(
 				final String value) throws Exception {
-			String[] strArr = value.split("|");
+			String[] strArr = value.split("\\|");
 			assert strArr.length == 16;
 						
 			return new Tuple16<Integer, Integer, Integer, Integer, Double, Double, Double, Double, String, String, String, String, String, String, String, String>
@@ -139,4 +199,43 @@ public class BenchmarkingJob {
 
 	}
 
+    private static class PricingSummaryReport implements WindowFunction<Tuple7<Double, Double, Double, Double, String, String, String>,
+                Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>, Tuple, TimeWindow>
+    {
+        @Override
+        public void apply(Tuple aLong, TimeWindow window,
+                          Iterable<Tuple7<Double, Double, Double, Double, String, String, String>> input,
+                          Collector<Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>> out) {
+            double sumQuantity = 0;
+            double sumExtendedPrice = 0;
+            double sumExtPriceDiscount = 0;
+            double sumExtPriceDiscountTax = 0;
+            double avgQuantity = 0;
+            double avgExtendedPrice = 0;
+            double avgDiscount = 0;
+            int count = 0;
+            String returnFlag = "";
+            String linestatus = "";
+            for (Tuple7<Double, Double, Double, Double, String, String, String> tuple : input) {
+                sumQuantity += tuple.f0;
+                sumExtendedPrice += tuple.f1;
+                sumExtPriceDiscount += tuple.f1 * (1 - tuple.f2);
+                sumExtPriceDiscountTax += tuple.f1 * (1 - tuple.f2) * (1 + tuple.f3);
+                avgDiscount += tuple.f2;
+                count++;
+                returnFlag = tuple.f4;
+                linestatus = tuple.f5;
+            }
+            avgQuantity = sumQuantity / count;
+            avgExtendedPrice = sumExtendedPrice / count;
+            avgDiscount /= count;
+
+            out.collect(Utils.keepOnlyTwoDecimals(
+                    new Tuple10<String, String, Double, Double, Double, Double, Double, Double, Double, Integer>(
+                            returnFlag, linestatus, sumQuantity, sumExtendedPrice,
+                            sumExtPriceDiscount, sumExtPriceDiscountTax, avgQuantity,
+                            avgExtendedPrice, avgDiscount, count)));
+        }
+    }
 }
+

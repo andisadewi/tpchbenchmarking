@@ -1,0 +1,9 @@
+**/*.iml
+**/*.log
+kafka/kafka_2.11-0.10.0.0/logs/*
+kafka/kafka_2.11-0.10.0.0/logs/*.log
+.idea/
+flink/target/
+spark/src/main/java/de/tuberlin/dima/bdapro/spark/tpch/batch/queries/Query22.java
+spark/target/
+tpch2.17.2/dbgen/testdata/
