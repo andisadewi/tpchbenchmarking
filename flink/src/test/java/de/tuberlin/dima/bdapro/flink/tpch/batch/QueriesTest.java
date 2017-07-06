@@ -251,7 +251,6 @@ public class QueriesTest {
 		final Tuple3<String, Integer, Integer> expected = new Tuple3<String, Integer, Integer>("MAIL", 6202, 9324);
 
 		for (final Tuple3<String, Integer, Integer> elem : result) {
-			System.out.println(elem.f0 + " - " + elem.f1 + " - " + elem.f2);
 			if (elem.equals(expected)) {
 				assertEquals(expected, elem);
 				return;

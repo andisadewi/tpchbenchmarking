@@ -62,7 +62,7 @@ public class BenchmarkingJob {
 		 * Benchmarking the queries for their execution time.
 		 */
 		SparkSession spark = SparkSession.builder()
-				.appName("TPCH Spark Batch Benchmarking").master("local").getOrCreate();
+				.appName("TPCH Spark Batch Benchmarking").getOrCreate();
 		
 		TableSourceProvider provider = new TableSourceProvider();
 		provider.setBaseDir(path);
@@ -74,132 +74,132 @@ public class BenchmarkingJob {
 		long start = 0;
 		long end = 0;
 		
-//		start = System.currentTimeMillis();
-//		final Query q1 = new Query1(spark);
-//		q1.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query1|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q2 = new Query2(spark);
-//		q2.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query2|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q3 = new Query3(spark);
-//		q3.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query3|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q4 = new Query4(spark);
-//		q4.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query4|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q5 = new Query5(spark);
-//		q5.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query5|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q6 = new Query6(spark);
-//		q6.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query6|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q7 = new Query7(spark);
-//		q7.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query7|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q8 = new Query8(spark);
-//		q8.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query8|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q9 = new Query9(spark);
-//		q9.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query9|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q10 = new Query10(spark);
-//		q10.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query10|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q11 = new Query11(spark, "1.0");
-//		q11.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query11|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q12 = new Query12(spark);
-//		q12.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query12|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q13 = new Query13(spark);
-//		q13.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query13|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q14 = new Query14(spark);
-//		q14.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query14|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q15 = new Query15(spark);
-//		q15.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query15|" + (end - start) + "\r\n");
-//		
-////				start = System.currentTimeMillis();
-////				final Query q16 = new Query16(spark);
-////				q16.execute();
-////				end = System.currentTimeMillis();
-////				results.add(" Query16|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q17 = new Query17(spark);
-//		q17.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query17|" + (end - start) + "\r\n");
-//		
+		start = System.currentTimeMillis();
+		final Query q1 = new Query1(spark);
+		q1.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query1|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q2 = new Query2(spark);
+		q2.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query2|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q3 = new Query3(spark);
+		q3.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query3|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q4 = new Query4(spark);
+		q4.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query4|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q5 = new Query5(spark);
+		q5.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query5|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q6 = new Query6(spark);
+		q6.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query6|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q7 = new Query7(spark);
+		q7.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query7|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q8 = new Query8(spark);
+		q8.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query8|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q9 = new Query9(spark);
+		q9.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query9|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q10 = new Query10(spark);
+		q10.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query10|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q11 = new Query11(spark, "1.0");
+		q11.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query11|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q12 = new Query12(spark);
+		q12.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query12|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q13 = new Query13(spark);
+		q13.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query13|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q14 = new Query14(spark);
+		q14.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query14|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q15 = new Query15(spark);
+		q15.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query15|" + (end - start) + "\r\n");
+		
+//				start = System.currentTimeMillis();
+//				final Query q16 = new Query16(spark);
+//				q16.execute();
+//				end = System.currentTimeMillis();
+//				results.add(" Query16|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q17 = new Query17(spark);
+		q17.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query17|" + (end - start) + "\r\n");
+		
 		start = System.currentTimeMillis();
 		final Query q18 = new Query18(spark);
 		q18.execute();
 		end = System.currentTimeMillis();
 		results.add(" Query18|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q19 = new Query19(spark);
-//		q19.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query19|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q20 = new Query20(spark);
-//		q20.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query20|" + (end - start) + "\r\n");
-//		
-//		start = System.currentTimeMillis();
-//		final Query q21 = new Query21(spark);
-//		q21.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query21|" + (end - start) + "\r\n");
-//		
+		
+		start = System.currentTimeMillis();
+		final Query q19 = new Query19(spark);
+		q19.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query19|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q20 = new Query20(spark);
+		q20.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query20|" + (end - start) + "\r\n");
+		
+		start = System.currentTimeMillis();
+		final Query q21 = new Query21(spark);
+		q21.execute();
+		end = System.currentTimeMillis();
+		results.add(" Query21|" + (end - start) + "\r\n");
+		
 //		start = System.currentTimeMillis();
 //		final Query q22 = new Query22(spark);
 //		q22.execute();

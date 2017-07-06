@@ -40,7 +40,7 @@ public class Query16 extends Query {
         env.registerTable("partsupp_mod", partsupp_mod);
 
         String SQLQuery = "SELECT p_brand, p_type, p_size, count(ps_suppkey) as supplier_cnt "
-                + "FROM partsupp_mod,part "
+                + "FROM partsupp_mod, part "
                 + "WHERE p_partkey = ps_partkey "
                 + "AND p_brand <> '" + brand + "' " + "AND  p_type not like '" + type +"%' "
                 + "AND p_size IN ( " + size1 + ", " + size2 + ", " + size3 + ", " + size4 + ", "

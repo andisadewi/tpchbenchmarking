@@ -33,15 +33,7 @@ public class Query21 extends Query {
 		Table res = env.sql(querySQL);
 		
 		try {
-			return env.toDataSet(res, TypeInformation.of(new TypeHint<Tuple2<String, Long>>() {
-			})).map(new MapFunction<Tuple2<String, Long>, Tuple2<String, Long>>() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Tuple2<String, Long> map(final Tuple2<String, Long> value) throws Exception {
-					return value;
-				}
-			}).collect();
+			return env.toDataSet(res, TypeInformation.of(new TypeHint<Tuple2<String, Long>>() {})).collect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

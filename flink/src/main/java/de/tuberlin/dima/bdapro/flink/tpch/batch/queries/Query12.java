@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.typeinfo.TypeHint;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
@@ -33,14 +34,7 @@ public class Query12 extends Query {
 		
 		try {
 			return env.toDataSet(res, TypeInformation.of(new TypeHint<Tuple3<String, Integer, Integer>>() {
-			})).map(new MapFunction<Tuple3<String, Integer, Integer>, Tuple3<String, Integer, Integer>>() {
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Tuple3<String, Integer, Integer> map(final Tuple3<String, Integer, Integer> value) throws Exception {
-					return Utils.keepOnlyTwoDecimals(value);
-				}
-			}).collect();
+            })).collect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

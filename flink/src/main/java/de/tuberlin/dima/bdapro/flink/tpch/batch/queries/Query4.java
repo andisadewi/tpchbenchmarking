@@ -54,9 +54,9 @@ public class Query4 extends Query {
 		int year = rand.nextInt((5) + 1993);
 		int month;
 		if(year < 1997) {
-			month = rand.nextInt(13) + 1;//) is inclusive in nextInt, so add 1
+			month = rand.nextInt(12) + 1;//) is inclusive in nextInt, so add 1
 		} else {
-			month = rand.nextInt(11) + 1;
+			month = rand.nextInt(10) + 1;
 		}
 		return LocalDate.of(year, month, 1);
 	}

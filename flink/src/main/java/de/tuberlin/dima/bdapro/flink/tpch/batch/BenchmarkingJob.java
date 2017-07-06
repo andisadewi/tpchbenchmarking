@@ -23,6 +23,7 @@ import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query18;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query19;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query2;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query20;
+import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query21;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query22;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query3;
 import de.tuberlin.dima.bdapro.flink.tpch.batch.queries.Query4;
@@ -50,10 +51,11 @@ public class BenchmarkingJob {
 		String path = args[0];
 		try {
 			File file = new File(path);
-			if (!(file.isDirectory() && file.exists())) {
+			if (!(file.isDirectory() && file.exists() || path.contains("hdfs"))) {
 				throw new IllegalArgumentException(
 						"Please give a valid path to the directory where the test databases are located.");
 			}
+			
 		} catch (Exception ex) {
 			throw new IllegalArgumentException(
 					"Please give a valid path to the directory where the test databases are located.");
@@ -179,11 +181,11 @@ public class BenchmarkingJob {
 		end = System.currentTimeMillis();
 		results.add(" Query15|" + (end - start) + "\r\n");
 		
-//		start = System.currentTimeMillis();
-//		final Query q16 = new Query16(tableEnv);
-//		q16.execute();
-//		end = System.currentTimeMillis();
-//		results.add(" Query16|" + (end - start) + "\r\n");
+////		start = System.currentTimeMillis();
+////		final Query q16 = new Query16(tableEnv);
+////		q16.execute();
+////		end = System.currentTimeMillis();
+////		results.add(" Query16|" + (end - start) + "\r\n");
 		
 		start = System.currentTimeMillis();
 		final Query q17 = new Query17(tableEnv);
